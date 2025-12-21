@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  /* Tokio Night Color Palette Mapping */
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-dim: var(--color-text-dim);
+
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-secondary: var(--color-accent-secondary);
+
+  --color-border: var(--color-border);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
+}
+
+:root {
+  font-family: 'Inter', sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+
+  /* VS Code Refined Theme Definitions */
+  --color-bg-primary: #0F1115;    /* Deep charcoal - Main background */
+  --color-bg-secondary: #161A22;  /* Panel/Card */
+  --color-bg-tertiary: #1D2330;   /* Elevated/Hover */
+
+  --color-text-primary: #E5E7EB;  /* Headlines, main content */
+  --color-text-secondary: #9CA3AF;/* Descriptions, metadata */
+  --color-text-dim: #6B7280;      /* Placeholder, inactive */
+
+  --color-accent: #4FC3F7;        /* Mason Blue - Primary Action */
+  --color-accent-hover: #0ea5e9;  /* Darker Blue for hover states */
+  --color-accent-secondary: #2DD4BF; /* Teal - System Status */
+
+  --color-border: #262C3A;        /* Soft Border */
+  --color-success: #34D399;       /* Green */
+  --color-warning: #FBBF24;       /* Warning / Tip */
+  --color-error: #F87171;         /* Error */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
