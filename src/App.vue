@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import Sidebar from '@/components/SideBar.vue'
-import Terminal from '@/components/TerminalFooter.vue'
-import EditorTabs from '@/components/EditorTabs.vue'
+import Sidebar from '@/components/layout/SideBar.vue'
+import Terminal from '@/components/layout/TerminalFooter.vue'
+import EditorTabs from '@/components/layout/EditorTabs.vue'
+import ChatPanel from '@/components/chat/ChatPanel.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -61,6 +62,9 @@ const getFileName = (path: string) => {
           <Terminal />
         </div>
       </div>
+
+      <!-- Right Chat Panel -->
+      <ChatPanel />
     </div>
 
     <!-- Footer Status Bar -->
@@ -73,7 +77,6 @@ const getFileName = (path: string) => {
         <span class="flex items-center"><span class="mr-1">⚠</span> 0</span>
       </div>
       <div class="flex gap-4">
-        <span>Ln 12, Col 44</span>
         <span>UTF-8</span>
         <span>TypeScript JSX</span>
         <span>Prettier</span>

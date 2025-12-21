@@ -12,7 +12,7 @@
       </h1>
 
       <p class="text-text-dim text-xl max-w-2xl mx-auto leading-relaxed">
-        Full Stack Engineer • AI Enthusiast • System Architect
+        Full Stack Engineer • AI Enthusiast
       </p>
 
       <div class="flex gap-4 justify-center mt-8 text-sm font-mono">
