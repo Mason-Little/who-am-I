@@ -1,6 +1,103 @@
+<script setup lang="ts">
+import { ref, reactive, nextTick, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { processCommand, type TerminalLine } from '@/helpers/terminal'
+
+const router = useRouter()
+const inputRef = ref<HTMLInputElement | null>(null)
+const terminalOutputRef = ref<HTMLElement | null>(null)
+const currentInput = ref('')
+const commandHistory = ref<string[]>([])
+const historyIndex = ref(-1)
+
+const history = reactive<TerminalLine[]>([
+  { type: 'output', content: 'Welcome to Mason OS v1.0.0' },
+  { type: 'output', content: 'Type "help" for available commands.' },
+])
+
+// Command Logic
+const handleCommand = async () => {
+  const cmd = currentInput.value.trim()
+  if (!cmd) return
+
+  // Add to display history
+  history.push({ type: 'command', content: cmd })
+
+  // Add to input history
+  commandHistory.value.push(cmd)
+  historyIndex.value = -1
+
+  // Process command
+  const result = processCommand(cmd, router)
+
+  if (result.action === 'clear') {
+    history.splice(0, history.length)
+  }
+
+  if (result.lines.length > 0) {
+    history.push(...result.lines)
+  }
+
+  currentInput.value = ''
+
+  // Scroll to bottom
+  await nextTick()
+  if (terminalOutputRef.value) {
+    terminalOutputRef.value.scrollTop = terminalOutputRef.value.scrollHeight
+  }
+}
+
+const navigateHistory = (direction: number) => {
+  if (commandHistory.value.length === 0) return
+
+  if (historyIndex.value === -1) {
+    historyIndex.value = commandHistory.value.length
+  }
+
+  historyIndex.value += direction
+
+  if (historyIndex.value >= commandHistory.value.length) {
+    historyIndex.value = commandHistory.value.length
+    currentInput.value = ''
+    return
+  }
+
+  if (historyIndex.value < 0) historyIndex.value = 0
+
+  const navCommand = commandHistory.value[historyIndex.value]
+  if (navCommand !== undefined) {
+    currentInput.value = navCommand
+  }
+}
+
+const focusInput = () => {
+  inputRef.value?.focus()
+}
+
+// Auto-type effect
+const autoTypeCommand = async (cmd: string) => {
+  // Simulate typing
+  currentInput.value = ''
+  for (let i = 0; i < cmd.length; i++) {
+    currentInput.value += cmd[i]
+    await new Promise((r) => setTimeout(r, 100 + Math.random() * 50)) // typing speed
+  }
+  await new Promise((r) => setTimeout(r, 400)) // delay before enter
+  await handleCommand()
+}
+
+onMounted(() => {
+  focusInput()
+  setTimeout(() => {
+    autoTypeCommand('help')
+  }, 1500)
+})
+</script>
+
 <template>
   <div
-    class="flex flex-col h-full bg-bg-secondary border-t border-border font-mono text-sm overflow-hidden"
+    class="flex flex-col h-full bg-bg-secondary border-t border-border font-mono text-xs overflow-hidden"
   >
     <!-- Terminal Header (Tabs) -->
     <div
@@ -50,153 +147,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, reactive, nextTick, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const inputRef = ref<HTMLInputElement | null>(null)
-const terminalOutputRef = ref<HTMLElement | null>(null)
-const currentInput = ref('')
-const commandHistory = ref<string[]>([])
-const historyIndex = ref(-1)
-
-interface HistoryLine {
-  type: 'command' | 'output'
-  content: string
-}
-
-const history = reactive<HistoryLine[]>([
-  { type: 'output', content: 'Welcome to Mason OS v1.0.0' },
-  { type: 'output', content: 'Type "help" for available commands.' },
-])
-
-// Command Logic
-const handleCommand = async () => {
-  const cmd = currentInput.value.trim()
-  if (!cmd) return
-
-  // Add to display history
-  history.push({ type: 'command', content: cmd })
-
-  // Add to input history
-  commandHistory.value.push(cmd)
-  historyIndex.value = -1
-
-  // Process command
-  const args = cmd.split(' ')
-  const mainCommand = (args[0] || '').toLowerCase()
-
-  switch (mainCommand) {
-    case 'help':
-      history.push({
-        type: 'output',
-        content: `Available commands:
-  cd <path>    Navigate to a section
-  ls           List available sections
-  cat <file>   View content (same as cd)
-  clear        Clear terminal output
-  whoami       Information about the user`,
-      })
-      break
-
-    case 'clear':
-      history.splice(0, history.length)
-      break
-
-    case 'ls':
-    case 'll':
-      history.push({
-        type: 'output',
-        content: `drwxr-xr-x  mason  projects
--rw-r--r--  mason  home.tsx
--rw-r--r--  mason  about.ts
--rw-r--r--  mason  blog/`,
-      })
-      break
-
-    case 'cd':
-      if (args[1]) {
-        const path = args[1].replace('./', '')
-        if (path === 'home' || path === 'home.tsx') router.push('/')
-        else if (path === 'about' || path === 'about.ts') router.push('/about')
-        else if (path === 'projects' || path === 'software') router.push('/projects/software')
-        else if (path === 'volvo' || path.includes('volvo')) router.push('/projects/volvo-240')
-        else if (path === 'blog') router.push('/blog')
-        else if (path === '..')
-          router.push('/') // Basic .. to home
-        else {
-          history.push({ type: 'output', content: `cd: no such file or directory: ${args[1]}` })
-        }
-      } else {
-        router.push('/')
-      }
-      break
-
-    case 'cat':
-      if (args[1]) {
-        // Re-use logic for simplicity
-        const path = args[1]
-        if (['home.tsx', 'about.ts', 'projects', 'blog'].some((k) => path.includes(k))) {
-          history.push({ type: 'output', content: `Opening ${path}...` })
-          // route after delay
-          if (path.includes('home')) router.push('/')
-          if (path.includes('about')) router.push('/about')
-        } else {
-          history.push({ type: 'output', content: `cat: ${path}: No such file or directory` })
-        }
-      }
-      break
-
-    case 'whoami':
-      history.push({ type: 'output', content: 'Mason Little - Software Engineer' })
-      break
-
-    default:
-      history.push({ type: 'output', content: `command not found: ${mainCommand}` })
-  }
-
-  currentInput.value = ''
-
-  // Scroll to bottom
-  await nextTick()
-  if (terminalOutputRef.value) {
-    terminalOutputRef.value.scrollTop = terminalOutputRef.value.scrollHeight
-  }
-}
-
-const navigateHistory = (direction: number) => {
-  if (commandHistory.value.length === 0) return
-
-  if (historyIndex.value === -1) {
-    historyIndex.value = commandHistory.value.length
-  }
-
-  historyIndex.value += direction
-
-  if (historyIndex.value >= commandHistory.value.length) {
-    historyIndex.value = commandHistory.value.length
-    currentInput.value = ''
-    return
-  }
-
-  if (historyIndex.value < 0) historyIndex.value = 0
-
-  const navCommand = commandHistory.value[historyIndex.value]
-  if (navCommand !== undefined) {
-    currentInput.value = navCommand
-  }
-}
-
-const focusInput = () => {
-  inputRef.value?.focus()
-}
-
-onMounted(() => {
-  focusInput()
-})
-</script>
 
 <style scoped>
 /* Optional: Custom Scrollbar for Terminal */

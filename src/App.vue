@@ -58,7 +58,7 @@ const getFileName = (path: string) => {
         </main>
 
         <!-- Bottom Terminal Panel (Fixed height) -->
-        <div class="h-48 shrink-0">
+        <div class="h-55 shrink-0">
           <Terminal />
         </div>
       </div>
