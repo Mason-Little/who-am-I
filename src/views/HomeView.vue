@@ -1,6 +1,33 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const name = ref('')
+const fullName = '${Mason}'
+const showCursor = ref(true)
+
+const typeText = async () => {
+  // Initial delay before typing starts
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  for (let i = 0; i <= fullName.length; i++) {
+    name.value = fullName.slice(0, i)
+    // Random typing delay for realism
+    await new Promise((resolve) => setTimeout(resolve, 50 + Math.random() * 100))
+  }
+}
+
+onMounted(() => {
+  typeText()
+  // Cursor blinking interval
+  setInterval(() => {
+    showCursor.value = !showCursor.value
+  }, 530)
+})
+</script>
+
 <template>
-  <div class="h-full flex flex-col items-center justify-center p-8">
-    <div class="text-center space-y-6">
+  <div class="relative h-full flex flex-col items-center justify-center p-8 overflow-hidden">
+    <div class="relative z-10 text-center space-y-8">
       <h2
         class="text-2xl md:text-3xl font-medium text-text-secondary animate-fade-in-up"
         style="animation-delay: 100ms"
@@ -9,13 +36,19 @@
       </h2>
 
       <h1
-        class="text-6xl md:text-8xl font-bold font-mono tracking-tight animate-fade-in-up"
+        class="text-6xl md:text-8xl font-bold font-mono tracking-tight animate-fade-in-up min-h-[1.2em]"
         style="animation-delay: 200ms"
       >
         <span
           class="bg-gradient-to-r from-accent to-accent-secondary bg-clip-text text-transparent"
         >
-          ${Mason}
+          {{ name }}
+        </span>
+        <span
+          class="text-accent inline-block w-[0.5em] align-baseline transition-opacity duration-100"
+          :class="{ 'opacity-0': !showCursor, 'opacity-100': showCursor }"
+        >
+          _
         </span>
       </h1>
 
@@ -32,13 +65,17 @@
       >
         <router-link
           to="/projects/software"
-          class="px-6 py-3 border border-accent text-accent hover:bg-accent/10 transition-colors rounded"
+          class="group relative px-8 py-3 overflow-hidden rounded bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.3)] border border-accent text-accent"
         >
-          View Projects
+          <span
+            class="absolute inset-0 w-full h-full bg-accent/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"
+          ></span>
+          <span class="relative">View Projects</span>
         </router-link>
+
         <router-link
           to="/about"
-          class="px-6 py-3 border border-border text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors rounded"
+          class="group px-8 py-3 border border-border text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-300 rounded hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
         >
           About Me
         </router-link>

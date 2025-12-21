@@ -29,19 +29,27 @@ const getFileName = (path: string) => {
       <Sidebar class="hidden md:flex shrink-0" />
 
       <!-- Editor Area -->
-      <div class="flex-grow flex flex-col min-w-0">
+      <div class="flex-grow flex flex-col min-w-0 relative">
+        <!-- Global Background Effects -->
+        <div
+          class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-bg-secondary/20 via-transparent to-transparent opacity-50 pointer-events-none"
+        ></div>
+        <div
+          class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"
+        ></div>
+
         <!-- Editor Tabs -->
-        <EditorTabs />
+        <EditorTabs class="relative z-10" />
 
         <!-- Breadcrumbs (Optional line) -->
         <div
-          class="h-6 bg-bg-primary flex items-center px-4 text-xs text-text-secondary select-none"
+          class="h-6 bg-bg-primary flex items-center px-4 text-xs text-text-secondary select-none relative z-10"
         >
           src > views > {{ getFileName(route.path) }}
         </div>
 
         <!-- Content (Scrollable) -->
-        <main class="flex-grow overflow-y-auto bg-bg-primary relative">
+        <main class="flex-grow overflow-y-auto relative z-10">
           <!-- Line Numbers (Visual fake) -->
           <div
             class="absolute left-0 top-0 bottom-0 w-12 text-right pr-3 pt-4 text-text-dim font-mono text-sm leading-6 select-none border-r border-border"
@@ -58,7 +66,7 @@ const getFileName = (path: string) => {
         </main>
 
         <!-- Bottom Terminal Panel (Fixed height) -->
-        <div class="h-55 shrink-0">
+        <div class="h-55 shrink-0 relative z-10">
           <Terminal />
         </div>
       </div>
