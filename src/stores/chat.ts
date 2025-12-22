@@ -1,12 +1,13 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { chat, type RedirectType } from '@/helpers/chat';
+import { chat } from '@/helpers/chat';
+import type { PageName } from '@/configs/view-route-config';
 
 export interface Message {
     id: number;
     role: 'user' | 'assistant';
     content: string;
-    redirect?: RedirectType;
+    page?: PageName;
 }
 
 export const useChatStore = defineStore('chat', () => {
@@ -29,12 +30,12 @@ export const useChatStore = defineStore('chat', () => {
         });
     };
 
-    const addAssistantMessage = (content: string, redirect?: RedirectType) => {
+    const addAssistantMessage = (content: string, page?: PageName) => {
         messages.value.push({
             id: Date.now() + 1,
             role: 'assistant',
             content,
-            redirect: redirect && redirect !== 'null' ? redirect : undefined,
+            page,
         });
     };
 
@@ -46,14 +47,13 @@ export const useChatStore = defineStore('chat', () => {
         error.value = null;
 
         try {
-            // Format messages for the AI SDK (excluding the initial greeting for context)
             const chatMessages = messages.value.map((msg) => ({
                 role: msg.role,
                 content: msg.content,
             }));
 
             const response = await chat(chatMessages);
-            addAssistantMessage(response.content, response.redirect);
+            addAssistantMessage(response.text, response.page);
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Failed to get response';
             addAssistantMessage("Sorry, I couldn't process that request. Please try again.");

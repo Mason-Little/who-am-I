@@ -1,25 +1,27 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import type { RedirectType } from '@/helpers/chat'
+import type { PageName } from '@/configs/view-route-config'
 
-const { role, content, redirect } = defineProps<{
-  role: 'user' | 'ai'
+const { role, content, page } = defineProps<{
+  role: 'user' | 'assistant'
   content: string
-  redirect?: RedirectType
+  page?: PageName
 }>()
 
 const router = useRouter()
 
-const redirectLabels: Record<Exclude<RedirectType, 'null'>, { label: string; route: string }> = {
-  volvo: { label: 'Volvo 240 Project', route: '/projects/volvo-240' },
-  'ai-tooling': { label: 'Software Projects', route: '/projects/software' },
+const pageLabels: Record<PageName, { label: string; route: string }> = {
+  home: { label: 'Home', route: '/' },
   about: { label: 'About Me', route: '/about' },
-  contact: { label: 'Contact', route: '/about' }, // Using about page for contact for now
+  volvo: { label: 'Volvo 240 Project', route: '/projects/volvo-240' },
+  blog: { label: 'Blog', route: '/blog' },
+  softwareProjects: { label: 'Software Projects', route: '/projects/software' },
+  contact: { label: 'Contact', route: '/contact' },
 }
 
 const handleRedirect = () => {
-  if (redirect && redirect !== 'null') {
-    router.push(redirectLabels[redirect].route)
+  if (page) {
+    router.push(pageLabels[page].route)
   }
 }
 </script>
@@ -41,7 +43,7 @@ const handleRedirect = () => {
     </div>
     <!-- Redirect Button -->
     <button
-      v-if="redirect && redirect !== 'null'"
+      v-if="page"
       @click="handleRedirect"
       class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-accent/10 text-accent border border-accent/30 rounded-md hover:bg-accent/20 transition-colors self-start"
     >
@@ -60,7 +62,7 @@ const handleRedirect = () => {
         <polyline points="15 3 21 3 21 9" />
         <line x1="10" y1="14" x2="21" y2="3" />
       </svg>
-      Check out {{ redirectLabels[redirect].label }}
+      Check out {{ pageLabels[page].label }}
     </button>
   </div>
 </template>

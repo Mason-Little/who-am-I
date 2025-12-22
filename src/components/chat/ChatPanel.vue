@@ -43,9 +43,9 @@ const handleSend = async (text: string) => {
       <ChatMessage
         v-for="msg in chatStore.messages"
         :key="msg.id"
-        :role="msg.role === 'assistant' ? 'ai' : 'user'"
+        :role="msg.role"
         :content="msg.content"
-        :redirect="msg.redirect"
+        :page="msg.page"
       />
       <!-- Loading indicator -->
       <div v-if="chatStore.isLoading" class="flex items-center gap-2 text-text-dim text-sm py-2">
@@ -63,7 +63,7 @@ const handleSend = async (text: string) => {
             style="animation-delay: 300ms"
           ></span>
         </div>
-        <span>Thinking...</span>
+        <span>Looking through pages...</span>
       </div>
     </div>
 

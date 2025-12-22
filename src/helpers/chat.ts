@@ -1,12 +1,13 @@
 import { createGroq } from '@ai-sdk/groq';
-import { generateObject } from 'ai';
-import { aboutMePrompt, aboutMeSchema } from '@/configs/aboutMePrompt';
-
-export type RedirectType = 'volvo' | 'ai-tooling' | 'about' | 'contact' | 'null';
+import { generateObject, generateText, type ModelMessage } from 'ai';
+import { viewRouteAgentPrompt } from '@/configs/view-route-prompt';
+import { routeSchema, type PageName } from '@/configs/view-route-config';
+import { getPageText } from '@/helpers/pageContent';
+import { aboutMePrompt } from '@/configs/about-me-prompt';
 
 export interface ChatResponse {
-    content: string;
-    redirect: RedirectType;
+    text: string;
+    page: PageName;
 }
 
 const groq = createGroq({
@@ -15,12 +16,27 @@ const groq = createGroq({
 
 const model = groq('openai/gpt-oss-20b');
 
-export const chat = async (messages: any): Promise<ChatResponse> => {
-    const response = await generateObject({
-        system: aboutMePrompt,
+export const chat = async (messages: ModelMessage[]): Promise<ChatResponse> => {
+    // Step 1: Route to find the right page
+    const routeResponse = await generateObject({
+        system: viewRouteAgentPrompt,
         model,
         messages,
-        schema: aboutMeSchema,
+        schema: routeSchema,
     });
-    return response.object as ChatResponse;
+
+    const selectedPage = routeResponse.object.selectedPage;
+
+    // Step 2: Get page content
+    const pageContent = getPageText(selectedPage);
+
+    // Step 3: Generate response with page context
+    const response = await generateText({
+        system: aboutMePrompt(pageContent),
+        model,
+        messages,
+    });
+
+
+    return { text: response.text, page: selectedPage };
 };

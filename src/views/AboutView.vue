@@ -61,7 +61,7 @@ const scrollToSection = (id: string) => {
             <p>
               What started as simple scripting evolved into building scrapers to find camping sites
               for my cousins. This project connected me with
-              <span class="text-text-primary font-medium">Marc Leventure</span>, who took me under
+              <span class="text-text-primary font-medium">Marc Laventure</span>, who took me under
               his wing. For a year, he mentored me in the fundamentals of Software Engineering,
               teaching me <strong>Vue.js, JavaScript, and Python</strong>.
             </p>
