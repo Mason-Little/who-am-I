@@ -1,11 +1,11 @@
-import { viewDescriptions } from './view-route-config'
+import { routeConfigs } from './view-route-config'
 
 
 export const viewRouteAgentPrompt = `
 You are the router agent for Mason's personal website. Your job is to determine which page contains the most relevant context for answering a user's question.
 
 ## Available Pages:
-${JSON.stringify(viewDescriptions.shape, null, 2)}
+${JSON.stringify(routeConfigs, null, 2)}
 
 ## Instructions:
 1. Read the user's question carefully
