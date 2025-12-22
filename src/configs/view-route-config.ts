@@ -1,6 +1,24 @@
 import { z } from 'zod'
 import type { Component } from 'vue'
 
+// Import all view components - single source of truth
+import HomeView from '@/views/HomeView.vue'
+import AboutView from '@/views/AboutView.vue'
+import ContactView from '@/views/ContactView.vue'
+import SoftwareProjectsView from '@/views/SoftwareProjectsView.vue'
+import VolvoProjectView from '@/views/VolvoProjectView.vue'
+import BlogView from '@/views/BlogView.vue'
+
+// Centralized component map - used by router and pageContent
+export const componentMap: Record<string, Component> = {
+  Home: HomeView,
+  About: AboutView,
+  Contact: ContactView,
+  SoftwareProjects: SoftwareProjectsView,
+  VolvoProject: VolvoProjectView,
+  Blog: BlogView,
+}
+
 // File type styling configuration
 export type FileType = 'TSX' | 'TS' | 'JSON' | 'LOG' | 'MD'
 

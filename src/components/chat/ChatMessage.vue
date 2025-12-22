@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import type { PageName } from '@/configs/view-route-config'
+import { routeConfigs, type PageName } from '@/configs/view-route-config'
 
 const { role, content, page } = defineProps<{
   role: 'user' | 'assistant'
@@ -10,18 +10,18 @@ const { role, content, page } = defineProps<{
 
 const router = useRouter()
 
-const pageLabels: Record<PageName, { label: string; route: string }> = {
-  home: { label: 'Home', route: '/' },
-  about: { label: 'About Me', route: '/about' },
-  volvo: { label: 'Volvo 240 Project', route: '/projects/volvo-240' },
-  blog: { label: 'Blog', route: '/blog' },
-  softwareProjects: { label: 'Software Projects', route: '/projects/software' },
-  contact: { label: 'Contact', route: '/contact' },
+// Get route info from centralized config
+const getPageInfo = (name: PageName) => {
+  const config = routeConfigs.find((r) => r.name === name)
+  return {
+    label: config?.title ?? name,
+    route: config?.path ?? '/',
+  }
 }
 
 const handleRedirect = () => {
   if (page) {
-    router.push(pageLabels[page].route)
+    router.push(getPageInfo(page).route)
   }
 }
 </script>
@@ -62,7 +62,7 @@ const handleRedirect = () => {
         <polyline points="15 3 21 3 21 9" />
         <line x1="10" y1="14" x2="21" y2="3" />
       </svg>
-      Check out {{ pageLabels[page].label }}
+      Check out {{ getPageInfo(page).label }}
     </button>
   </div>
 </template>

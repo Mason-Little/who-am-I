@@ -1,24 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import type { Component } from 'vue'
-import { routeConfigs } from '@/configs/view-route-config'
-
-// Import all view components
-import HomeView from '@/views/HomeView.vue'
-import AboutView from '@/views/AboutView.vue'
-import ContactView from '@/views/ContactView.vue'
-import SoftwareProjectsView from '@/views/SoftwareProjectsView.vue'
-import VolvoProjectView from '@/views/VolvoProjectView.vue'
-import BlogView from '@/views/BlogView.vue'
-
-// Map route names to components
-const componentMap: Record<string, Component> = {
-  Home: HomeView,
-  About: AboutView,
-  Contact: ContactView,
-  SoftwareProjects: SoftwareProjectsView,
-  VolvoProject: VolvoProjectView,
-  Blog: BlogView,
-}
+import { routeConfigs, componentMap } from '@/configs/view-route-config'
 
 // Generate routes from centralized config
 const routes: RouteRecordRaw[] = routeConfigs

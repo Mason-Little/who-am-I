@@ -14,7 +14,7 @@ const groq = createGroq({
     apiKey: import.meta.env.VITE_GROQ_API_KEY,
 });
 
-const model = groq('openai/gpt-oss-20b');
+const model = groq('openai/gpt-oss-120b');
 
 export const chat = async (messages: ModelMessage[]): Promise<ChatResponse> => {
     // Step 1: Route to find the right page

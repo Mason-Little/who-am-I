@@ -1,21 +1,8 @@
-import { createApp, h, type Component } from 'vue'
-import HomeView from '@/views/HomeView.vue'
-import AboutView from '@/views/AboutView.vue'
-import VolvoProjectView from '@/views/VolvoProjectView.vue'
-import BlogView from '@/views/BlogView.vue'
-import SoftwareProjectsView from '@/views/SoftwareProjectsView.vue'
-import type { PageName } from '@/configs/view-route-config'
-
-const views: Record<PageName, Component> = {
-  home: HomeView,
-  about: AboutView,
-  volvo: VolvoProjectView,
-  blog: BlogView,
-  softwareProjects: SoftwareProjectsView,
-}
+import { createApp, h } from 'vue'
+import { routeConfigs, componentMap, type PageName } from '@/configs/view-route-config'
 
 export function getPageText(pageName: PageName): string {
-  const component = views[pageName]
+  const component = componentMap[pageName]
   if (!component) return ''
 
   const container = document.createElement('div')
@@ -26,3 +13,11 @@ export function getPageText(pageName: PageName): string {
 
   return text.replace(/\s+/g, ' ').trim()
 }
+
+// Helper to get route config by name
+export function getRouteByName(name: PageName) {
+  return routeConfigs.find((r) => r.name === name)
+}
+
+// Export PageName for convenience
+export type { PageName }
