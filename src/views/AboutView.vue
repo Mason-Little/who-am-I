@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import PageLayout from '@/components/ui/PageLayout.vue'
-import PageHeader from '@/components/ui/PageHeader.vue'
+import PageLayout from '@/components/layout/PageLayout.vue'
+import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProseBlock from '@/components/ui/ProseBlock.vue'
+import SkillCard from '@/components/cards/SkillCard.vue'
 
 const skills = {
   languages: ['TypeScript', 'JavaScript', 'Python', 'Vue.js', 'HTML/CSS'],
@@ -105,26 +106,12 @@ const sections = [
     <section id="skills" class="space-y-6 scroll-mt-20">
       <SectionHeader title="Tech Stack & Skills" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
+        <SkillCard
           v-for="(items, category) in skills"
           :key="category"
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 capitalize group-hover:text-accent transition-colors"
-          >
-            {{ category.replace('_', ' ') }}
-          </h3>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="skill in items"
-              :key="skill"
-              class="px-3 py-1 text-sm rounded bg-surface-primary text-text-secondary border border-border group-hover:border-accent/30 transition-colors"
-            >
-              {{ skill }}
-            </span>
-          </div>
-        </div>
+          :category="category.replace('_', ' ')"
+          :skills="items"
+        />
       </div>
     </section>
   </PageLayout>

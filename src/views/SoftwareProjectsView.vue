@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import PageLayout from '@/components/ui/PageLayout.vue'
-import PageHeader from '@/components/ui/PageHeader.vue'
+import PageLayout from '@/components/layout/PageLayout.vue'
+import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
-import ProjectCard from '@/components/ui/ProjectCard.vue'
-import type { ProjectCardProps } from '@/components/ui/ProjectCard.vue'
+import ProjectCard from '@/components/cards/ProjectCard.vue'
+import type { ProjectCardProps } from '@/components/cards/ProjectCard.vue'
 
 //TODO: we need to make a view for each one of these projects
 const projects: ProjectCardProps[] = [

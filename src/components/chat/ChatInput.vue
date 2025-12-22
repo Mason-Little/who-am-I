@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import DevButton from '@/components/ui/DevButton.vue'
-import DevInput from '@/components/ui/DevInput.vue'
+import DevButton from '@/components/dev/DevButton.vue'
+import DevInput from '@/components/dev/DevInput.vue'
 
 const { disabled } = defineProps<{
   disabled?: boolean

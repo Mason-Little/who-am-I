@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PageLayout from '@/components/ui/PageLayout.vue'
-import PageHeader from '@/components/ui/PageHeader.vue'
+import PageLayout from '@/components/layout/PageLayout.vue'
+import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProseBlock from '@/components/ui/ProseBlock.vue'
 
