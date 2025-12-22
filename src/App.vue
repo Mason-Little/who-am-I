@@ -4,8 +4,10 @@ import Terminal from '@/components/layout/TerminalFooter.vue'
 import EditorTabs from '@/components/layout/EditorTabs.vue'
 import ChatPanel from '@/components/chat/ChatPanel.vue'
 import { useRoute } from 'vue-router'
+import { useLayout } from '@/composables/useLayout'
 
 const route = useRoute()
+const { sidebarWidth, terminalHeight, chatPanelWidth, startResize } = useLayout()
 
 const getFileName = (path: string) => {
   if (path === '/') return 'home.tsx'
@@ -26,7 +28,14 @@ const getFileName = (path: string) => {
     <!-- Main Workspace -->
     <div class="flex-grow flex overflow-hidden">
       <!-- Sidebar (Activity Bar + Explorer) -->
-      <Sidebar class="hidden md:flex shrink-0" />
+      <div class="hidden md:flex flex-col shrink-0" :style="{ width: sidebarWidth + 'px' }">
+        <Sidebar class="w-full h-full" />
+      </div>
+      <!-- Resizer -->
+      <div
+        class="w-1 hover:bg-accent/50 cursor-col-resize shrink-0 z-50 transition-colors active:bg-accent"
+        @mousedown="startResize('sidebar')"
+      ></div>
 
       <!-- Editor Area -->
       <div class="flex-grow flex flex-col min-w-0 relative">
@@ -65,14 +74,26 @@ const getFileName = (path: string) => {
           </div>
         </main>
 
-        <!-- Bottom Terminal Panel (Fixed height) -->
-        <div class="h-55 shrink-0 relative z-10">
+        <!-- Resizer -->
+        <div
+          class="h-1 hover:bg-accent/50 cursor-row-resize shrink-0 z-50 transition-colors active:bg-accent"
+          @mousedown="startResize('terminal')"
+        ></div>
+        <!-- Bottom Terminal Panel (Dynamic height) -->
+        <div class="shrink-0 relative z-10" :style="{ height: terminalHeight + 'px' }">
           <Terminal />
         </div>
       </div>
 
+      <!-- Resizer -->
+      <div
+        class="w-1 hover:bg-accent/50 cursor-col-resize shrink-0 z-50 transition-colors active:bg-accent"
+        @mousedown="startResize('chat')"
+      ></div>
       <!-- Right Chat Panel -->
-      <ChatPanel />
+      <div class="shrink-0 flex flex-col" :style="{ width: chatPanelWidth + 'px' }">
+        <ChatPanel class="w-full h-full" />
+      </div>
     </div>
 
     <!-- Footer Status Bar -->

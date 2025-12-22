@@ -27,7 +27,7 @@ const handleSend = async (text: string) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-bg-primary border-l border-border w-80 shrink-0">
+  <div class="h-full flex flex-col bg-bg-primary border-l border-border shrink-0">
     <!-- Header -->
     <div class="h-10 border-b border-border flex items-center px-4 justify-between select-none">
       <span class="text-xs font-bold text-text-primary uppercase tracking-wider">Chat</span>
