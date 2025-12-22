@@ -39,11 +39,11 @@ const getFileName = (path: string) => {
         ></div>
 
         <!-- Editor Tabs -->
-        <EditorTabs class="relative z-10" />
+        <EditorTabs class="relative z-10 shrink-0" />
 
         <!-- Breadcrumbs (Optional line) -->
         <div
-          class="h-6 bg-bg-primary flex items-center px-4 text-xs text-text-secondary select-none relative z-10"
+          class="h-6 bg-bg-primary flex items-center px-4 text-xs text-text-secondary select-none relative z-10 shrink-0"
         >
           src > views > {{ getFileName(route.path) }}
         </div>
