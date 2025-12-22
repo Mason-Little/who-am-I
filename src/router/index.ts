@@ -1,42 +1,34 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import type { Component } from 'vue'
+import { routeConfigs } from '@/configs/view-route-config'
+
+// Import all view components
 import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
+import ContactView from '@/views/ContactView.vue'
 import SoftwareProjectsView from '@/views/SoftwareProjectsView.vue'
 import VolvoProjectView from '@/views/VolvoProjectView.vue'
 import BlogView from '@/views/BlogView.vue'
 
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: HomeView,
-    meta: { title: 'Home' }
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: AboutView,
-    meta: { title: 'About' }
-  },
-  {
-    path: '/projects/software',
-    name: 'SoftwareProjects',
-    component: SoftwareProjectsView,
-    meta: { title: 'Software Projects' }
-  },
-  {
-    path: '/projects/volvo-240',
-    name: 'VolvoProject',
-    component: VolvoProjectView,
-    meta: { title: 'Volvo 240 LS Swap' }
-  },
-  {
-    path: '/blog',
-    name: 'Blog',
-    component: BlogView,
-    meta: { title: 'Blog' }
-  }
-]
+// Map route names to components
+const componentMap: Record<string, Component> = {
+  Home: HomeView,
+  About: AboutView,
+  Contact: ContactView,
+  SoftwareProjects: SoftwareProjectsView,
+  VolvoProject: VolvoProjectView,
+  Blog: BlogView,
+}
+
+// Generate routes from centralized config
+const routes: RouteRecordRaw[] = routeConfigs
+  .filter((config) => config.name in componentMap)
+  .map((config) => ({
+    path: config.path,
+    name: config.name,
+    component: componentMap[config.name]!,
+    meta: { title: config.title },
+  }))
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,9 +37,9 @@ const router = createRouter({
     // Catch-all
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/'
-    }
-  ]
+      redirect: '/',
+    },
+  ],
 })
 
 export default router

@@ -1,10 +1,25 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { fileTypeColors, getRootRoutes, getRoutesByParent } from '@/configs/view-route-config'
+
+const isExpanded = ref(true)
+const isProjectsExpanded = ref(true)
+const isBlogExpanded = ref(true)
+
+const toggleExpanded = () => (isExpanded.value = !isExpanded.value)
+const toggleProjects = () => (isProjectsExpanded.value = !isProjectsExpanded.value)
+const toggleBlog = () => (isBlogExpanded.value = !isBlogExpanded.value)
+
+// Get routes for each section
+const rootRoutes = getRootRoutes()
+const projectRoutes = getRoutesByParent('projects')
+const blogRoutes = getRoutesByParent('blog')
+</script>
+
 <template>
   <div
     class="bg-bg-secondary h-full flex flex-col border-r border-border text-text-primary select-none"
   >
-    <!-- Activity Bar Placeholder (Left Strip) -->
-    <!-- Simplified: just the sidebar content -->
-
     <!-- Explorer Header -->
     <div
       class="px-4 py-2 text-xs font-bold tracking-wider uppercase text-text-secondary flex justify-between items-center group"
@@ -26,28 +41,22 @@
 
     <!-- File Tree -->
     <div v-show="isExpanded" class="flex-col font-mono text-[12px]">
-      <!-- Home -->
+      <!-- Root level files (Home, About, Contact) -->
       <router-link
-        to="/"
+        v-for="route in rootRoutes"
+        :key="route.path"
+        :to="route.path"
         class="flex items-center px-4 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
         active-class="bg-bg-tertiary border-accent text-text-primary"
       >
-        <span class="mr-2 text-[#e37933]">TSX</span>
-        home.tsx
-      </router-link>
-
-      <!-- About -->
-      <router-link
-        to="/about"
-        class="flex items-center px-4 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
-        active-class="bg-bg-tertiary border-accent text-text-primary"
-      >
-        <span class="mr-2 text-[#3178c6]">TS</span>
-        about.ts
+        <span class="mr-2" :style="{ color: fileTypeColors[route.fileType] }">
+          {{ route.fileType }}
+        </span>
+        {{ route.fileName }}
       </router-link>
 
       <!-- Projects Folder -->
-      <div>
+      <div v-if="projectRoutes.length > 0">
         <div
           @click="toggleProjects"
           class="flex items-center px-4 py-1 cursor-pointer hover:bg-bg-tertiary text-text-primary"
@@ -63,26 +72,22 @@
 
         <div v-show="isProjectsExpanded">
           <router-link
-            to="/projects/software"
+            v-for="route in projectRoutes"
+            :key="route.path"
+            :to="route.path"
             class="flex items-center pl-8 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
             active-class="bg-bg-tertiary border-accent text-text-primary"
           >
-            <span class="mr-2 text-[#e37933]">TSX</span>
-            software.tsx
-          </router-link>
-          <router-link
-            to="/projects/volvo-240"
-            class="flex items-center pl-8 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
-            active-class="bg-bg-tertiary border-accent text-text-primary"
-          >
-            <span class="mr-2 text-[#dcdcaa]">LOG</span>
-            volvo_240.log
+            <span class="mr-2" :style="{ color: fileTypeColors[route.fileType] }">
+              {{ route.fileType }}
+            </span>
+            {{ route.fileName }}
           </router-link>
         </div>
       </div>
 
       <!-- Blog Folder -->
-      <div>
+      <div v-if="blogRoutes.length > 0">
         <div
           @click="toggleBlog"
           class="flex items-center px-4 py-1 cursor-pointer hover:bg-bg-tertiary text-text-primary"
@@ -98,27 +103,19 @@
 
         <div v-show="isBlogExpanded">
           <router-link
-            to="/blog"
+            v-for="route in blogRoutes"
+            :key="route.path"
+            :to="route.path"
             class="flex items-center pl-8 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
             active-class="bg-bg-tertiary border-accent text-text-primary"
           >
-            <span class="mr-2 text-[#b072d1]">MD</span>
-            README.md
+            <span class="mr-2" :style="{ color: fileTypeColors[route.fileType] }">
+              {{ route.fileType }}
+            </span>
+            {{ route.fileName }}
           </router-link>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const isExpanded = ref(true)
-const isProjectsExpanded = ref(true)
-const isBlogExpanded = ref(true)
-
-const toggleExpanded = () => (isExpanded.value = !isExpanded.value)
-const toggleProjects = () => (isProjectsExpanded.value = !isProjectsExpanded.value)
-const toggleBlog = () => (isBlogExpanded.value = !isBlogExpanded.value)
-</script>
