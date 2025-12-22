@@ -5,7 +5,7 @@ const terminalHeight = ref(220) // Initial height
 const chatPanelWidth = ref(350) // Initial width
 
 // Min/Max constraints
-const MIN_SIDEBAR_WIDTH = 1675
+const MIN_SIDEBAR_WIDTH = 170
 const MAX_SIDEBAR_WIDTH = 500
 const MIN_TERMINAL_HEIGHT = 100
 const MAX_TERMINAL_HEIGHT = 600
