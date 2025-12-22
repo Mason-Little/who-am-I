@@ -4,16 +4,13 @@ import { fileTypeColors, getRootRoutes, getRoutesByParent } from '@/configs/view
 
 const isExpanded = ref(true)
 const isProjectsExpanded = ref(true)
-const isBlogExpanded = ref(true)
 
 const toggleExpanded = () => (isExpanded.value = !isExpanded.value)
 const toggleProjects = () => (isProjectsExpanded.value = !isProjectsExpanded.value)
-const toggleBlog = () => (isBlogExpanded.value = !isBlogExpanded.value)
 
 // Get routes for each section
 const rootRoutes = getRootRoutes()
 const projectRoutes = getRoutesByParent('projects')
-const blogRoutes = getRoutesByParent('blog')
 </script>
 
 <template>
@@ -73,37 +70,6 @@ const blogRoutes = getRoutesByParent('blog')
         <div v-show="isProjectsExpanded">
           <router-link
             v-for="route in projectRoutes"
-            :key="route.path"
-            :to="route.path"
-            class="flex items-center pl-8 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"
-            active-class="bg-bg-tertiary border-accent text-text-primary"
-          >
-            <span class="mr-2" :style="{ color: fileTypeColors[route.fileType] }">
-              {{ route.fileType }}
-            </span>
-            {{ route.fileName }}
-          </router-link>
-        </div>
-      </div>
-
-      <!-- Blog Folder -->
-      <div v-if="blogRoutes.length > 0">
-        <div
-          @click="toggleBlog"
-          class="flex items-center px-4 py-1 cursor-pointer hover:bg-bg-tertiary text-text-primary"
-        >
-          <span
-            class="mr-1 transform transition-transform text-xs"
-            :class="{ 'rotate-90': isBlogExpanded }"
-            >›</span
-          >
-          <span class="text-blue-400 mr-2">📂</span>
-          blog
-        </div>
-
-        <div v-show="isBlogExpanded">
-          <router-link
-            v-for="route in blogRoutes"
             :key="route.path"
             :to="route.path"
             class="flex items-center pl-8 py-1 cursor-pointer hover:bg-bg-tertiary border-l-2 border-transparent"

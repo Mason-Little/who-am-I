@@ -7,7 +7,7 @@ import AboutView from '@/views/AboutView.vue'
 import ContactView from '@/views/ContactView.vue'
 import SoftwareProjectsView from '@/views/SoftwareProjectsView.vue'
 import VolvoProjectView from '@/views/VolvoProjectView.vue'
-import BlogView from '@/views/BlogView.vue'
+
 
 // Centralized component map - used by router and pageContent
 export const componentMap: Record<string, Component> = {
@@ -16,7 +16,7 @@ export const componentMap: Record<string, Component> = {
   Contact: ContactView,
   SoftwareProjects: SoftwareProjectsView,
   VolvoProject: VolvoProjectView,
-  Blog: BlogView,
+
 }
 
 // File type styling configuration
@@ -84,15 +84,6 @@ export const routeConfigs: RouteConfig[] = [
     title: 'Volvo 240 LS Swap',
     description: "Mason's 1992 Volvo 240 project - LS-swapped with Twin Turbo 5.3L engine. Mechanical/car enthusiast content.",
     parent: 'projects',
-  },
-  {
-    path: '/blog',
-    name: 'Blog',
-    fileName: 'README.md',
-    fileType: 'MD',
-    title: 'Blog',
-    description: 'Blog posts about AI, engineering, and technology.',
-    parent: 'blog',
   },
 ]
 
