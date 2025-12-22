@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-64 bg-bg-secondary h-full flex flex-col border-r border-border text-text-primary select-none"
+    class="w-50 bg-bg-secondary h-full flex flex-col border-r border-border text-text-primary select-none"
   >
     <!-- Activity Bar Placeholder (Left Strip) -->
     <!-- Simplified: just the sidebar content -->
@@ -25,7 +25,7 @@
     </div>
 
     <!-- File Tree -->
-    <div v-show="isExpanded" class="flex-col font-mono text-[13px]">
+    <div v-show="isExpanded" class="flex-col font-mono text-[12px]">
       <!-- Home -->
       <router-link
         to="/"
