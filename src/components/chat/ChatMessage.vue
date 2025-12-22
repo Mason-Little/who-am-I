@@ -35,9 +35,6 @@ const handleRedirect = () => {
         : 'bg-transparent self-start mr-8 ml-2 border border-border'
     "
   >
-    <div class="font-bold text-xs uppercase text-text-dim mb-1">
-      {{ role === 'user' ? 'You' : 'Antigravity' }}
-    </div>
     <div class="whitespace-pre-wrap leading-relaxed">
       {{ content }}
     </div>

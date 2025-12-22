@@ -1,9 +1,9 @@
 import { createGroq } from '@ai-sdk/groq';
-import { generateObject, generateText, type ModelMessage } from 'ai';
+import { generateObject, type ModelMessage } from 'ai';
 import { viewRouteAgentPrompt } from '@/configs/view-route-prompt';
 import { routeSchema, type PageName } from '@/configs/view-route-config';
 import { getPageText } from '@/helpers/pageContent';
-import { aboutMePrompt } from '@/configs/about-me-prompt';
+import { aboutMePrompt, responseSchema } from '@/configs/about-me-prompt';
 
 export interface ChatResponse {
     text: string;
@@ -31,12 +31,16 @@ export const chat = async (messages: ModelMessage[]): Promise<ChatResponse> => {
     const pageContent = getPageText(selectedPage);
 
     // Step 3: Generate response with page context
-    const response = await generateText({
+    const response = await generateObject({
         system: aboutMePrompt(pageContent),
         model,
         messages,
+        schema: responseSchema,
     });
 
+    if (response.object.notSure) {
+        return { text: response.object.response, page: "Contact" };
+    }
 
-    return { text: response.text, page: selectedPage };
+    return { text: response.object.response, page: selectedPage };
 };
