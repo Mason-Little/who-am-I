@@ -1,23 +1,10 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch } from 'vue'
+import { useChatStore } from '@/stores/chat'
 import ChatMessage from './ChatMessage.vue'
 import ChatInput from './ChatInput.vue'
 
-interface Message {
-  id: number
-  role: 'user' | 'ai'
-  content: string
-}
-
-const messages = ref<Message[]>([
-  {
-    id: 1,
-    role: 'ai',
-    content:
-      "Hi, I'm Antigravity (not really). using the new cursor feature you added. How can I help you regarding this repo?",
-  },
-])
-
+const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement | null>(null)
 
 const scrollToBottom = () => {
@@ -28,27 +15,14 @@ const scrollToBottom = () => {
   })
 }
 
-const handleSend = (text: string) => {
-  // Add user message
-  messages.value.push({
-    id: Date.now(),
-    role: 'user',
-    content: text,
-  })
-  scrollToBottom()
+// Watch for new messages to auto-scroll
+watch(
+  () => chatStore.messages.length,
+  () => scrollToBottom(),
+)
 
-  // Mock AI response
-  setTimeout(() => {
-    messages.value.push({
-      id: Date.now() + 1,
-      role: 'ai',
-      content:
-        'I see you are talking about ' +
-        (text.includes('@') ? 'a specific file.' : 'something.') +
-        ' That is interesting! This is a mock response.',
-    })
-    scrollToBottom()
-  }, 1000)
+const handleSend = async (text: string) => {
+  await chatStore.sendMessage(text)
 }
 </script>
 
@@ -66,12 +40,36 @@ const handleSend = (text: string) => {
 
     <!-- Messages Area -->
     <div ref="messagesContainer" class="flex-grow overflow-y-auto p-4 custom-scrollbar">
-      <ChatMessage v-for="msg in messages" :key="msg.id" :role="msg.role" :content="msg.content" />
+      <ChatMessage
+        v-for="msg in chatStore.messages"
+        :key="msg.id"
+        :role="msg.role === 'assistant' ? 'ai' : 'user'"
+        :content="msg.content"
+        :redirect="msg.redirect"
+      />
+      <!-- Loading indicator -->
+      <div v-if="chatStore.isLoading" class="flex items-center gap-2 text-text-dim text-sm py-2">
+        <div class="flex gap-1">
+          <span
+            class="w-2 h-2 bg-accent rounded-full animate-bounce"
+            style="animation-delay: 0ms"
+          ></span>
+          <span
+            class="w-2 h-2 bg-accent rounded-full animate-bounce"
+            style="animation-delay: 150ms"
+          ></span>
+          <span
+            class="w-2 h-2 bg-accent rounded-full animate-bounce"
+            style="animation-delay: 300ms"
+          ></span>
+        </div>
+        <span>Thinking...</span>
+      </div>
     </div>
 
     <!-- Input Area -->
     <div class="p-4 pt-2">
-      <ChatInput @send="handleSend" />
+      <ChatInput @send="handleSend" :disabled="chatStore.isLoading" />
     </div>
   </div>
 </template>

@@ -3,7 +3,13 @@ import { ref } from 'vue'
 import DevButton from '@/components/ui/DevButton.vue'
 import DevInput from '@/components/ui/DevInput.vue'
 
-const emit = defineEmits(['send'])
+const { disabled } = defineProps<{
+  disabled?: boolean
+}>()
+
+const emit = defineEmits<{
+  send: [text: string]
+}>()
 
 const input = ref('')
 const showTagMenu = ref(false)
@@ -73,6 +79,7 @@ const mockFiles = ['App.vue', 'HomeView.vue', 'main.ts', 'AboutView.vue']
         as="textarea"
         rows="1"
         placeholder="Ask anything... (Type '@' to tag)"
+        :disabled="disabled"
         @input="handleInput"
         @keydown="handleKeyDown"
       />
