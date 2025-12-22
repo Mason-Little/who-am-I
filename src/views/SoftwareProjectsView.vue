@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import PageLayout from '@/components/ui/PageLayout.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProjectCard from '@/components/ui/ProjectCard.vue'
 import type { ProjectCardProps } from '@/components/ui/ProjectCard.vue'
 
@@ -30,43 +33,19 @@ const projects: ProjectCardProps[] = [
 </script>
 
 <template>
-  <div class="px-6 py-8 relative">
-    <div class="max-w-5xl mx-auto space-y-10 animate-fade-in pb-20">
-      <!-- Header Section -->
-      <section class="space-y-4">
-        <h1 class="text-4xl font-bold text-text-primary tracking-tight"># Software Projects</h1>
-        <p class="text-xl text-text-secondary leading-relaxed border-l-4 border-accent pl-4 italic">
-          > A collection of AI-powered tools and applications I've built.
-        </p>
-      </section>
+  <PageLayout>
+    <PageHeader
+      title="Software Projects"
+      subtitle="A collection of AI-powered tools and applications I've built."
+    />
 
-      <!-- Projects Grid -->
-      <section class="space-y-6">
-        <h2 class="text-2xl font-semibold text-text-primary flex items-center gap-2">
-          <span class="text-accent">##</span> Featured Projects
-        </h2>
+    <!-- Projects Grid -->
+    <section class="space-y-6">
+      <SectionHeader title="Featured Projects" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ProjectCard v-for="project in projects" :key="project.title" v-bind="project" />
-        </div>
-      </section>
-    </div>
-  </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ProjectCard v-for="project in projects" :key="project.title" v-bind="project" />
+      </div>
+    </section>
+  </PageLayout>
 </template>
-
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>
