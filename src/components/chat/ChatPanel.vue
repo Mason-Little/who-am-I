@@ -31,11 +31,7 @@ const handleSend = async (text: string) => {
     <!-- Header -->
     <div class="h-10 border-b border-border flex items-center px-4 justify-between select-none">
       <span class="text-xs font-bold text-text-primary uppercase tracking-wider">Chat</span>
-      <div class="flex gap-2">
-        <!-- Window Controls (fake) -->
-        <div class="w-2 h-2 rounded-full bg-text-dim opacity-50"></div>
-        <div class="w-2 h-2 rounded-full bg-text-dim opacity-50"></div>
-      </div>
+      <div class="flex gap-2"></div>
     </div>
 
     <!-- Messages Area -->
