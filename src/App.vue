@@ -3,11 +3,20 @@ import Sidebar from '@/components/layout/SideBar.vue'
 import Terminal from '@/components/layout/TerminalFooter.vue'
 import EditorTabs from '@/components/layout/EditorTabs.vue'
 import ChatPanel from '@/components/chat/ChatPanel.vue'
+import IconChat from '@/components/icons/IconChat.vue'
 import { useRoute } from 'vue-router'
 import { useLayout } from '@/composables/useLayout'
 
 const route = useRoute()
-const { sidebarWidth, terminalHeight, chatPanelWidth, startResize } = useLayout()
+const {
+  sidebarWidth,
+  terminalHeight,
+  effectiveChatWidth,
+  startResize,
+  isChatOpen,
+  isDragging,
+  toggleMinimizeChat,
+} = useLayout()
 
 const getFileName = (path: string) => {
   if (path === '/') return 'home.tsx'
@@ -38,7 +47,7 @@ const getFileName = (path: string) => {
       ></div>
 
       <!-- Editor Area -->
-      <div class="flex-grow flex flex-col min-w-0 relative">
+      <div class="flex-grow flex flex-col min-w-0 relative overflow-hidden">
         <!-- Global Background Effects -->
         <div
           class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-bg-secondary/20 via-transparent to-transparent opacity-50 pointer-events-none"
@@ -47,8 +56,23 @@ const getFileName = (path: string) => {
           class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"
         ></div>
 
-        <!-- Editor Tabs -->
-        <EditorTabs class="relative z-10 shrink-0" />
+        <!-- Editor Tabs & Header Actions -->
+        <div
+          class="flex w-full bg-bg-secondary border-b border-bg-primary relative z-10 shrink-0 h-9"
+        >
+          <div class="flex-grow min-w-0 overflow-hidden">
+            <EditorTabs class="h-full border-b-0" />
+          </div>
+          <!-- Chat Toggle (Visible when chat is closed) -->
+          <button
+            v-if="!isChatOpen"
+            @click="toggleMinimizeChat"
+            class="px-3 hover:bg-bg-primary text-text-secondary hover:text-text-primary flex items-center justify-center border-l border-bg-primary transition-colors cursor-pointer"
+            title="Open Chat"
+          >
+            <IconChat />
+          </button>
+        </div>
 
         <!-- Breadcrumbs (Optional line) -->
         <div
@@ -91,7 +115,11 @@ const getFileName = (path: string) => {
         @mousedown="startResize('chat')"
       ></div>
       <!-- Right Chat Panel -->
-      <div class="shrink-0 flex flex-col" :style="{ width: chatPanelWidth + 'px' }">
+      <div
+        class="shrink-0 flex flex-col will-change-[width]"
+        :class="{ 'transition-[width] duration-300 ease-out': !isDragging }"
+        :style="{ width: effectiveChatWidth + 'px' }"
+      >
         <ChatPanel class="w-full h-full" />
       </div>
     </div>

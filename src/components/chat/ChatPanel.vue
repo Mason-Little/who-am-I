@@ -3,9 +3,13 @@ import { ref, nextTick, watch } from 'vue'
 import { useChatStore } from '@/stores/chat'
 import ChatMessage from './ChatMessage.vue'
 import ChatInput from './ChatInput.vue'
+import IconMaximize from '@/components/icons/IconMaximize.vue'
+import IconChevronRight from '@/components/icons/IconChevronRight.vue'
+import { useLayout } from '@/composables/useLayout'
 
 const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement | null>(null)
+const { toggleFullScreenChat, toggleMinimizeChat } = useLayout()
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -31,7 +35,14 @@ const handleSend = async (text: string) => {
     <!-- Header -->
     <div class="h-10 border-b border-border flex items-center px-4 justify-between select-none">
       <span class="text-xs font-bold text-text-primary uppercase tracking-wider">Chat</span>
-      <div class="flex gap-2"></div>
+      <div class="flex gap-5">
+        <button @click="toggleFullScreenChat" class="hover:text-accent transition-colors">
+          <IconMaximize />
+        </button>
+        <button @click="toggleMinimizeChat" class="hover:text-accent transition-colors">
+          <IconChevronRight class="w-6 h-6" />
+        </button>
+      </div>
     </div>
 
     <!-- Messages Area -->
