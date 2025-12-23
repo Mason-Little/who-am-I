@@ -9,7 +9,7 @@ import { useLayout } from '@/composables/useLayout'
 
 const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement | null>(null)
-const { toggleFullScreenChat, toggleMinimizeChat } = useLayout()
+const { toggleFullScreenChat, toggleMinimizeChat, isMobile } = useLayout()
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -36,7 +36,11 @@ const handleSend = async (text: string) => {
     <div class="h-10 border-b border-border flex items-center px-4 justify-between select-none">
       <span class="text-xs font-bold text-text-primary uppercase tracking-wider">Chat</span>
       <div class="flex gap-5">
-        <button @click="toggleFullScreenChat" class="hover:text-accent transition-colors">
+        <button
+          v-if="!isMobile"
+          @click="toggleFullScreenChat"
+          class="hover:text-accent transition-colors"
+        >
           <IconMaximize />
         </button>
         <button @click="toggleMinimizeChat" class="hover:text-accent transition-colors">

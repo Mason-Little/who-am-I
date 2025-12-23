@@ -7,6 +7,10 @@ const isChatOpen = ref(true)
 const isChatFullScreen = ref(false)
 
 // Min/Max constraints
+const isMobile = ref(false)
+const isSidebarVisible = ref(true) // Start visible for desktop, will adjust on mount
+
+// Min/Max constraints
 const MIN_SIDEBAR_WIDTH = 170
 const MAX_SIDEBAR_WIDTH = 500
 const MIN_TERMINAL_HEIGHT = 100
@@ -16,8 +20,40 @@ const MAX_CHAT_WIDTH = 600
 
 const isDragging = ref(false)
 
+const updateMobileState = () => {
+  const mobile = window.innerWidth < 768
+  if (mobile !== isMobile.value) {
+    isMobile.value = mobile
+    // Reset states when switching modes
+    if (mobile) {
+      isSidebarVisible.value = false // Hidden by default on mobile
+      isChatFullScreen.value = true // Chat is always full screen on mobile when open
+      isChatOpen.value = false // Closed by default on mobile
+    } else {
+      isSidebarVisible.value = true
+      isChatFullScreen.value = false
+    }
+  }
+}
+
 export const useLayout = () => {
+  // Initialize mobile state
+  // We can't do this immediately in SSR context but this is a client-side app
+  if (typeof window !== 'undefined') {
+    // Check initial
+    updateMobileState() // Initial check might need to be in a mounted hook or similar if used globally,
+                        // but since this is a global state defined outside the function,
+                        // we need to be careful about when it runs.
+                        // For simplicity, let's rely on the component using it to trigger a check or listeners.
+  }
+
+  // To ensure we track resize, we should probably set up the listener once.
+  // Since this is a singleton-ish composable (state outside), we can set up listeners globally if we want,
+  // or just rely on the App.vue to mount it.
+
   const startResize = (type: 'sidebar' | 'terminal' | 'chat') => {
+    if (isMobile.value) return // Disable resizing on mobile
+
     isDragging.value = true
 
     const onMouseMove = (e: MouseEvent) => {
@@ -80,21 +116,32 @@ export const useLayout = () => {
 
   const toggleMinimizeChat = () => {
     isChatOpen.value = !isChatOpen.value
-    // If closing, we also turn off full screen so next open is normal size?
-    // Or keep it? "Maximize" usually implies a temporary state. Let's reset it on close.
-    if (!isChatOpen.value) {
+    // On mobile, if we close chat, we just close it.
+    // On desktop, we reset fullscreen.
+    if (!isChatOpen.value && !isMobile.value) {
       isChatFullScreen.value = false
     }
   }
 
-  // Alias for compatibility
-  // const toggleMinimizeChat = toggleChatVisibility
+  const toggleSidebar = () => {
+    isSidebarVisible.value = !isSidebarVisible.value
+  }
 
+  // Determine effective width based on responsive state
   const effectiveChatWidth = computed(() => {
     if (!isChatOpen.value) return 0
+    // On mobile, chat takes full width if open
+    if (isMobile.value) return window.innerWidth
     if (isChatFullScreen.value) return window.innerWidth - sidebarWidth.value
     return preferredChatWidth.value
   })
+
+  // Listen for resize to update mobile state
+  if (typeof window !== 'undefined') {
+     window.addEventListener('resize', updateMobileState)
+     // Initial check
+     updateMobileState()
+  }
 
   return {
     sidebarWidth,
@@ -104,8 +151,11 @@ export const useLayout = () => {
     isChatOpen,
     isChatFullScreen,
     isDragging,
+    isMobile,
+    isSidebarVisible,
     startResize,
     toggleFullScreenChat,
-    toggleMinimizeChat
+    toggleMinimizeChat,
+    toggleSidebar
   }
 }
