@@ -115,6 +115,20 @@ export const routeConfigs: RouteConfig[] = [
       liveUrl: '/projects/volvo', // Self-referential for the project page
     },
   },
+  {
+    path: '/projects/a-better-way',
+    name: 'ABetterWay',
+    fileName: 'a-better-way.ts',
+    fileType: 'TS',
+    title: 'A Better Way',
+    description:
+      "A maps app that doesn't prioritize time but enjoyment. It takes you the route with the least standstill traffic.",
+    viewPath: 'ABetterWayView.vue',
+    parent: 'projects',
+    projectData: {
+      tags: ['Maps', 'Traffic', 'Navigation', 'App'],
+    },
+  },
 ]
 
 // Note: The above "ProjectIndex" items like 'ContentWriter' might clutter the router if we blindly map them.
