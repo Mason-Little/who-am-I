@@ -120,7 +120,7 @@ export const routeConfigs: RouteConfig[] = [
     fileType: 'LOG',
     title: 'Volvo 240 LS Swap',
     description:
-      "Mason's 1992 Volvo 240 project - LS-swapped with Twin Turbo 5.3L engine. Mechanical/car enthusiast content.",
+      "My 1992 Volvo 240 project - LS-swapped with Twin Turbo 5.3L engine. Mechanical/car enthusiast content.",
     viewPath: 'VolvoView.vue',
     parent: 'projects',
     projectData: {
