@@ -121,14 +121,6 @@ const getFileName = (path: string) => {
 
         <!-- Content (Scrollable) -->
         <main class="flex-grow overflow-y-auto relative z-10">
-          <!-- Line Numbers (Visual fake, Desktop Only) -->
-          <div
-            v-if="!layout.isMobile"
-            class="absolute left-0 top-0 bottom-0 w-12 text-right pr-3 pt-4 text-text-dim font-mono text-sm leading-6 select-none border-r border-border"
-          >
-            <div v-for="n in 50" :key="n">{{ n }}</div>
-          </div>
-
           <!-- Route Content -->
           <div :class="{ 'pl-16 pr-8 pt-4 pb-12': !layout.isMobile, 'p-4 pb-20': layout.isMobile }">
             <router-view v-slot="{ Component }">
