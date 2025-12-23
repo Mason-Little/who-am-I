@@ -4,9 +4,7 @@ import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProseBlock from '@/components/ui/ProseBlock.vue'
 import MediaItem from '@/components/ui/MediaItem.vue'
-
-// Assets are hosted on jsDelivr to avoid bloating the build
-const CDN_BASE = 'https://cdn.jsdelivr.net/gh/Mason-Little/who-am-I@main/media/volvo'
+import { getCloudinaryUrl } from '@/helpers/cloudinary'
 
 const specs = {
   engine: ['5.3L LS V8', 'Twin Turbo Setup', 'Custom Intake Manifold', 'Standalone ECU'],
@@ -46,7 +44,11 @@ const sections = [
           world.
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="Ripping out lights" :src="`${CDN_BASE}/lights-out.jpg`" />
+      <MediaItem
+        type="image"
+        label="Ripping out lights"
+        :src="getCloudinaryUrl('lights-out_hpdbuh', 'image')"
+      />
 
       <!-- Chapter 2: Learning Curve -->
       <ProseBlock>
@@ -55,7 +57,11 @@ const sections = [
           lot 🤫. About a year later of it just sitting, I bought an aluminum LS...
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="Aluminum LS Engine" :src="`${CDN_BASE}/aluminum-engine.jpg`" />
+      <MediaItem
+        type="image"
+        label="Aluminum LS Engine"
+        :src="getCloudinaryUrl('aluminum-engine_pyarcb', 'image')"
+      />
 
       <!-- Chapter 3: Tear Down -->
       <ProseBlock>
@@ -64,7 +70,11 @@ const sections = [
           thinking "this is going to be so easy" (spoiler: it took another 3 years).
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="Engine Bay Empty" :src="`${CDN_BASE}/engine-out.jpg`" />
+      <MediaItem
+        type="image"
+        label="Engine Bay Empty"
+        :src="getCloudinaryUrl('engine-out_baiegp', 'image')"
+      />
 
       <!-- Chapter 4: Rebuild -->
       <ProseBlock>
@@ -73,14 +83,18 @@ const sections = [
       <MediaItem
         type="image"
         label="Engine Rebuild Process"
-        :src="`${CDN_BASE}/engine-rebuild.jpg`"
+        :src="getCloudinaryUrl('engine-rebuild_z8jra3', 'image')"
       />
 
       <!-- Chapter 5: Assembly -->
       <ProseBlock>
         <p>Lots of parts later, the engine was in the car.</p>
       </ProseBlock>
-      <MediaItem type="image" label="Engine Installing" :src="`${CDN_BASE}/in-the-car.jpg`" />
+      <MediaItem
+        type="image"
+        label="Engine Installing"
+        :src="getCloudinaryUrl('in-the-car_gj6t8e')"
+      />
 
       <!-- Chapter 6: First Start -->
       <ProseBlock>
@@ -89,13 +103,21 @@ const sections = [
           coming out the front fenders. After that we thought we should probably build an exhaust.
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="Fender Exit Exhaust" :src="`${CDN_BASE}/exhuast.jpg`" />
+      <MediaItem
+        type="image"
+        label="Fender Exit Exhaust"
+        :src="getCloudinaryUrl('exhuast_n2kqem')"
+      />
 
       <!-- Chapter 7: Upgrades -->
       <ProseBlock>
         <p>...suspension...</p>
       </ProseBlock>
-      <MediaItem type="image" label="Suspension Upgrade" :src="`${CDN_BASE}/suspension.jpg`" />
+      <MediaItem
+        type="image"
+        label="Suspension Upgrade"
+        :src="getCloudinaryUrl('suspension_sofirt')"
+      />
 
       <ProseBlock>
         <p>
@@ -104,12 +126,12 @@ const sections = [
         </p>
       </ProseBlock>
 
-      <MediaItem type="image" label="New Wheels" :src="`${CDN_BASE}/wheels.jpg`" />
+      <MediaItem type="image" label="New Wheels" :src="getCloudinaryUrl('wheels_anf76k')" />
 
       <ProseBlock>
         <p>...and wrap.</p>
       </ProseBlock>
-      <MediaItem type="image" label="Car Wrapped" :src="`${CDN_BASE}/wrap.jpg`" />
+      <MediaItem type="image" label="Car Wrapped" :src="getCloudinaryUrl('wrap-min_qcgwg4')" />
 
       <!-- Chapter 8: Interior -->
       <ProseBlock>
@@ -118,7 +140,7 @@ const sections = [
           C63 seats.
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="C63 Seats" :src="`${CDN_BASE}/seats.jpg`" />
+      <MediaItem type="image" label="C63 Seats" :src="getCloudinaryUrl('seats_psjpcu')" />
 
       <ProseBlock>
         <p>
@@ -134,13 +156,25 @@ const sections = [
           welded a custom twin turbo kit for my car...
         </p>
       </ProseBlock>
-      <MediaItem type="image" label="Custom Twin Turbo Kit" :src="`${CDN_BASE}/turbos.jpg`" />
-      <MediaItem type="image" label="Custom Twin Turbo Kit" :src="`${CDN_BASE}/turbos-top.jpg`" />
+      <MediaItem
+        type="image"
+        label="Custom Twin Turbo Kit"
+        :src="getCloudinaryUrl('turbos_jlf3ez')"
+      />
+      <MediaItem
+        type="image"
+        label="Custom Twin Turbo Kit"
+        :src="getCloudinaryUrl('turbos-top_fsgfzp')"
+      />
 
       <ProseBlock>
         <p>...and finally I was able to dyno it...</p>
       </ProseBlock>
-      <MediaItem type="video" label="Dyno Run Video" :src="`${CDN_BASE}/dyno.mp4`" />
+      <MediaItem
+        type="video"
+        label="Dyno Run Video"
+        :src="getCloudinaryUrl('dyno_xjtova', 'video')"
+      />
 
       <ProseBlock>
         <p>
