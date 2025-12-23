@@ -100,6 +100,20 @@ export const routeConfigs: RouteConfig[] = [
     },
   },
   {
+    path: '/projects/my-website',
+    name: 'MyWebsite',
+    fileName: 'my-website.ts',
+    fileType: 'TS',
+    title: 'Personal Website',
+    description: "A meta-project about this portfolio site. Built with Vue 3, Tailwind, and details on the Agent Chat.",
+    viewPath: 'MyWebsiteView.vue',
+    parent: 'projects',
+    projectData: {
+      tags: ['Vue 3', 'TypeScript', 'Tailwind', 'Vite', 'Agentic UX'],
+      githubUrl: 'https://github.com/Mason-Little/who-am-I',
+    },
+  },
+  {
     path: '/projects/volvo',
     name: 'VolvoProject',
     fileName: 'volvo_240.log',
@@ -111,8 +125,6 @@ export const routeConfigs: RouteConfig[] = [
     parent: 'projects',
     projectData: {
       tags: ['Volvo', '240', 'LS V8', 'Swap', 'Engine', 'Car'],
-      githubUrl: 'https://github.com/Mason-Little/my-website',
-      liveUrl: '/projects/volvo', // Self-referential for the project page
     },
   },
   {
