@@ -93,23 +93,10 @@ export const routeConfigs: RouteConfig[] = [
     fileType: 'TS',
     title: 'Agent Scalar',
     description: 'A sophisticated multi-agent system using PG Vector, TypeScript, and JSON Schema.',
+    viewPath: 'AgentScalarView.vue',
     parent: 'projects',
     projectData: {
       tags: ['TypeScript', 'PGVector', 'Multi-Agent', 'JSON Schema', 'AI Orchestration'],
-    },
-  },
-  {
-    path: '/', // Link to home for "Personal Website" card
-    name: 'PersonalWebsite', // Unique name - careful with duplicates in route matching, maybe use a different "id" for cards vs routes
-    fileName: 'my-website.tsx',
-    fileType: 'TSX',
-    title: 'Personal Website',
-    description: 'This very website! A developer portfolio designed as an IDE interface.',
-    parent: 'projects',
-    projectData: {
-      tags: ['Vue.js', 'TypeScript', 'Groq AI', 'Tailwind CSS'],
-      githubUrl: 'https://github.com/Mason-Little/my-website',
-      liveUrl: '/',
     },
   },
   {
