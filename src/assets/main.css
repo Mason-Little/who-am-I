@@ -24,7 +24,7 @@
   font-family: 'Inter', sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 
-  /* VS Code Refined Theme Definitions */
+  /* Default Theme (VS Code / Dark) */
   --color-bg-primary: #0f1115; /* Deep charcoal - Main background */
   --color-bg-secondary: #161a22; /* Panel/Card */
   --color-bg-tertiary: #1d2330; /* Elevated/Hover */
@@ -41,6 +41,91 @@
   --color-success: #34d399; /* Green */
   --color-warning: #fbbf24; /* Warning / Tip */
   --color-error: #f87171; /* Error */
+}
+
+/* Light Theme */
+.theme-light {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f3f4f6;
+  --color-bg-tertiary: #e5e7eb;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-dim: #9ca3af;
+
+  --color-accent: #0284c7; /* Sky 600 */
+  --color-accent-hover: #0369a1; /* Sky 700 */
+  --color-accent-secondary: #0d9488; /* Teal 600 */
+
+  --color-border: #e5e7eb;
+}
+
+/* Forest Theme */
+.theme-forest {
+  --color-bg-primary: #051a12; /* Very dark green */
+  --color-bg-secondary: #0a261a;
+  --color-bg-tertiary: #113624;
+
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-dim: #64748b;
+
+  --color-accent: #10b981; /* Emerald 500 */
+  --color-accent-hover: #059669; /* Emerald 600 */
+  --color-accent-secondary: #a7f3d0; /* Emerald 200 */
+
+  --color-border: #134e35;
+}
+
+/* Cyberpunk Theme */
+.theme-cyberpunk {
+  --color-bg-primary: #0b0c15; /* Deep dark blue-black */
+  --color-bg-secondary: #161823;
+  --color-bg-tertiary: #202334;
+
+  --color-text-primary: #00ff9f; /* Neon Green */
+  --color-text-secondary: #ff00ff; /* Neon Magenta */
+  --color-text-dim: #71717a;
+
+  --color-accent: #facc15; /* Yellow */
+  --color-accent-hover: #eab308;
+  --color-accent-secondary: #06b6d4; /* Cyan */
+
+  --color-border: #2e1065; /* Deep Purple border */
+}
+
+/* Coffee Theme */
+.theme-coffee {
+  --color-bg-primary: #282424; /* Espresso */
+  --color-bg-secondary: #3b302c; /* Mocha */
+  --color-bg-tertiary: #4e3f3a; /* Latte */
+
+  --color-text-primary: #ede0d4; /* Foam */
+  --color-text-secondary: #d6ccc2;
+  --color-text-dim: #9c6644;
+
+  --color-accent: #e6b8a2; /* Creamy */
+  --color-accent-hover: #ddb892;
+  --color-accent-secondary: #cb997e;
+
+  --color-border: #5e503f;
+}
+
+/* Winter Theme */
+.theme-winter {
+  --color-bg-primary: #f0f9ff; /* Alice Blue */
+  --color-bg-secondary: #e0f2fe; /* Light Sky */
+  --color-bg-tertiary: #bae6fd; /* Sky 200 */
+
+  --color-text-primary: #0c4a6e; /* Sky 900 */
+  --color-text-secondary: #0369a1; /* Sky 700 */
+  --color-text-dim: #7dd3fc;
+
+  --color-accent: #0ea5e9; /* Sky 500 */
+  --color-accent-hover: #0284c7;
+  --color-accent-secondary: #38bdf8;
+
+  --color-border: #bfdbfe;
 }
 
 body {

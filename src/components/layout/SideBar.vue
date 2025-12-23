@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { fileTypeColors, getRootRoutes, getRoutesByParent } from '@/configs/view-route-config'
+import ThemeSelector from '@/components/ui/ThemeSelector.vue'
 
 const isExpanded = ref(true)
 const isProjectsExpanded = ref(true)
@@ -88,6 +89,11 @@ const emit = defineEmits<{
           </router-link>
         </div>
       </div>
+    </div>
+
+    <!-- Theme Selector (Bottom) -->
+    <div class="mt-auto p-4 border-t border-border">
+      <ThemeSelector />
     </div>
   </div>
 </template>
