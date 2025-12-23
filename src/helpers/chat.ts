@@ -28,7 +28,7 @@ export const chat = async (messages: ModelMessage[]): Promise<ChatResponse> => {
     const selectedPage = routeResponse.object.selectedPage;
 
     // Step 2: Get page content
-    const pageContent = getPageText(selectedPage);
+    const pageContent = await getPageText(selectedPage);
 
     // Step 3: Generate response with page context
     const response = await generateObject({
