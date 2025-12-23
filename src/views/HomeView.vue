@@ -64,7 +64,7 @@ onMounted(() => {
         style="animation-delay: 400ms"
       >
         <router-link
-          to="/projects/software"
+          to="/projects"
           class="group relative px-8 py-3 overflow-hidden rounded bg-transparent transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.3)] border border-accent text-accent"
         >
           <span
