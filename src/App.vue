@@ -6,20 +6,10 @@ import ChatPanel from '@/components/chat/ChatPanel.vue'
 import IconChat from '@/components/icons/IconChat.vue'
 import { useRoute } from 'vue-router'
 import { useLayout } from '@/composables/useLayout'
+import { reactive } from 'vue'
 
 const route = useRoute()
-const {
-  sidebarWidth,
-  terminalHeight,
-  effectiveChatWidth,
-  startResize,
-  isChatOpen,
-  isDragging,
-  toggleMinimizeChat,
-  isMobile,
-  isSidebarVisible,
-  toggleSidebar,
-} = useLayout()
+const layout = reactive(useLayout())
 
 const getFileName = (path: string) => {
   if (path === '/') return 'home.tsx'
@@ -37,17 +27,20 @@ const getFileName = (path: string) => {
   >
     <!-- Top Mobile Status Bar (Visible only on mobile) -->
     <div
-      v-if="isMobile"
+      v-if="layout.isMobile"
       class="h-10 bg-bg-secondary border-b border-border flex items-center justify-between px-4 shrink-0 z-50 sticky top-0"
     >
-      <button @click="toggleSidebar" class="p-1 -ml-2 text-text-secondary hover:text-text-primary">
+      <button
+        @click="layout.toggleSidebar"
+        class="p-1 -ml-2 text-text-secondary hover:text-text-primary"
+      >
         <span class="text-xl">☰</span>
       </button>
       <span class="text-xs font-bold text-text-secondary uppercase tracking-wider"
         >Mason-Little</span
       >
       <button
-        @click="toggleMinimizeChat"
+        @click="layout.toggleMinimizeChat"
         class="p-1 -mr-2 text-text-secondary hover:text-text-primary"
       >
         <IconChat class="w-5 h-5" />
@@ -61,29 +54,32 @@ const getFileName = (path: string) => {
       <div
         class="flex flex-col shrink-0 bg-bg-secondary h-full transition-transform duration-300 ease-in-out z-40"
         :class="{
-          'hidden md:flex': !isSidebarVisible && !isMobile, // Desktop: hide if toggled off (functionality not fully there but good for future)
-          'absolute inset-y-0 left-0 shadow-xl border-r border-border': isMobile,
-          'translate-x-0': isSidebarVisible || !isMobile,
-          '-translate-x-full': isMobile && !isSidebarVisible,
-          'md:translate-x-0': !isMobile, // Reset transform on desktop
+          'hidden md:flex': !layout.isSidebarVisible && !layout.isMobile, // Desktop: hide if toggled off (functionality not fully there but good for future)
+          'absolute inset-y-0 left-0 shadow-xl border-r border-border': layout.isMobile,
+          'translate-x-0': layout.isSidebarVisible || !layout.isMobile,
+          '-translate-x-full': layout.isMobile && !layout.isSidebarVisible,
+          'md:translate-x-0': !layout.isMobile, // Reset transform on desktop
         }"
-        :style="{ width: isMobile ? '80%' : sidebarWidth + 'px' }"
+        :style="{ width: layout.isMobile ? '80%' : layout.sidebarWidth + 'px' }"
       >
-        <Sidebar class="w-full h-full" @link-click="isMobile ? toggleSidebar() : null" />
+        <Sidebar
+          class="w-full h-full"
+          @link-click="layout.isMobile ? layout.toggleSidebar() : null"
+        />
       </div>
 
       <!-- Mobile Overlay Backdrop for Sidebar -->
       <div
-        v-if="isMobile && isSidebarVisible"
-        @click="toggleSidebar"
+        v-if="layout.isMobile && layout.isSidebarVisible"
+        @click="layout.toggleSidebar"
         class="absolute inset-0 bg-black/50 z-30 backdrop-blur-sm"
       ></div>
 
       <!-- Resizer (Desktop Only) -->
       <div
-        v-if="!isMobile"
+        v-if="!layout.isMobile"
         class="w-1 hover:bg-accent/50 cursor-col-resize shrink-0 z-50 transition-colors active:bg-accent"
-        @mousedown="startResize('sidebar')"
+        @mousedown="layout.startResize('sidebar')"
       ></div>
 
       <!-- Editor Area -->
@@ -99,15 +95,15 @@ const getFileName = (path: string) => {
         <!-- Editor Tabs & Header Actions -->
         <div
           class="flex w-full bg-bg-secondary border-b border-bg-primary relative z-10 shrink-0 h-9"
-          v-if="!isMobile"
+          v-if="!layout.isMobile"
         >
           <div class="flex-grow min-w-0 overflow-hidden">
             <EditorTabs class="h-full border-b-0" />
           </div>
           <!-- Chat Toggle (Visible when chat is closed) -->
           <button
-            v-if="!isChatOpen"
-            @click="toggleMinimizeChat"
+            v-if="!layout.isChatOpen"
+            @click="layout.toggleMinimizeChat"
             class="px-3 hover:bg-bg-primary text-text-secondary hover:text-text-primary flex items-center justify-center border-l border-bg-primary transition-colors cursor-pointer"
             title="Open Chat"
           >
@@ -117,7 +113,7 @@ const getFileName = (path: string) => {
 
         <!-- Breadcrumbs (Desktop Only or simplified) -->
         <div
-          v-if="!isMobile"
+          v-if="!layout.isMobile"
           class="h-6 bg-bg-primary flex items-center px-4 text-xs text-text-secondary select-none relative z-10 shrink-0"
         >
           src > views > {{ getFileName(route.path) }}
@@ -127,14 +123,14 @@ const getFileName = (path: string) => {
         <main class="flex-grow overflow-y-auto relative z-10">
           <!-- Line Numbers (Visual fake, Desktop Only) -->
           <div
-            v-if="!isMobile"
+            v-if="!layout.isMobile"
             class="absolute left-0 top-0 bottom-0 w-12 text-right pr-3 pt-4 text-text-dim font-mono text-sm leading-6 select-none border-r border-border"
           >
             <div v-for="n in 50" :key="n">{{ n }}</div>
           </div>
 
           <!-- Route Content -->
-          <div :class="{ 'pl-16 pr-8 pt-4 pb-12': !isMobile, 'p-4 pb-20': isMobile }">
+          <div :class="{ 'pl-16 pr-8 pt-4 pb-12': !layout.isMobile, 'p-4 pb-20': layout.isMobile }">
             <router-view v-slot="{ Component }">
               <component :is="Component" />
             </router-view>
@@ -143,15 +139,15 @@ const getFileName = (path: string) => {
 
         <!-- Resizer (Desktop Only) -->
         <div
-          v-if="!isMobile"
+          v-if="!layout.isMobile"
           class="h-1 hover:bg-accent/50 cursor-row-resize shrink-0 z-50 transition-colors active:bg-accent"
-          @mousedown="startResize('terminal')"
+          @mousedown="layout.startResize('terminal')"
         ></div>
         <!-- Bottom Terminal Panel (Dynamic height) -->
         <div
           class="shrink-0 relative z-10"
-          :class="{ hidden: isMobile }"
-          :style="{ height: terminalHeight + 'px' }"
+          :class="{ hidden: layout.isMobile }"
+          :style="{ height: layout.terminalHeight + 'px' }"
         >
           <Terminal />
         </div>
@@ -159,9 +155,9 @@ const getFileName = (path: string) => {
 
       <!-- Resizer (Desktop Only) -->
       <div
-        v-if="!isMobile"
+        v-if="!layout.isMobile"
         class="w-1 hover:bg-accent/50 cursor-col-resize shrink-0 z-50 transition-colors active:bg-accent"
-        @mousedown="startResize('chat')"
+        @mousedown="layout.startResize('chat')"
       ></div>
 
       <!-- Right Chat Panel -->
@@ -169,15 +165,15 @@ const getFileName = (path: string) => {
       <div
         class="shrink-0 flex flex-col will-change-[width] z-50 bg-bg-primary"
         :class="{
-          'transition-[width] duration-300 ease-out': !isDragging && !isMobile,
-          'transition-transform duration-300 ease-in-out': isMobile,
-          'absolute inset-0 w-full h-full': isMobile,
+          'transition-[width] duration-300 ease-out': !layout.isDragging && !layout.isMobile,
+          'transition-transform duration-300 ease-in-out': layout.isMobile,
+          'absolute inset-0 w-full h-full': layout.isMobile,
           // Mobile: Toggle visibility via transform
-          'translate-x-0': isMobile && isChatOpen,
-          'translate-x-full': isMobile && !isChatOpen,
+          'translate-x-0': layout.isMobile && layout.isChatOpen,
+          'translate-x-full': layout.isMobile && !layout.isChatOpen,
           // Desktop specific constraints are handled by style width
         }"
-        :style="{ width: isMobile ? '100%' : effectiveChatWidth + 'px' }"
+        :style="{ width: layout.isMobile ? '100%' : layout.effectiveChatWidth + 'px' }"
       >
         <ChatPanel class="w-full h-full" />
       </div>

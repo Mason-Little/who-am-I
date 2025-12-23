@@ -1,34 +1,40 @@
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-const sidebarWidth = ref(200) // Initial width
-const terminalHeight = ref(220) // Initial height
-const preferredChatWidth = ref(350) // Initial width
-const isChatOpen = ref(true)
-const isChatFullScreen = ref(false)
+// --- Constants ---
+const LAYOUT_CONFIG = {
+  SIDEBAR: { MIN: 170, MAX: 500, INITIAL: 200 },
+  TERMINAL: { MIN: 100, MAX: 600, INITIAL: 220, FOOTER_HEIGHT: 24 },
+  CHAT: { MIN: 250, MAX: 600, INITIAL: 350 },
+  MOBILE_BREAKPOINT: 768,
+} as const
 
-// Min/Max constraints
-const isMobile = ref(false)
-const isSidebarVisible = ref(true) // Start visible for desktop, will adjust on mount
+type ResizeTarget = 'sidebar' | 'terminal' | 'chat'
 
-// Min/Max constraints
-const MIN_SIDEBAR_WIDTH = 170
-const MAX_SIDEBAR_WIDTH = 500
-const MIN_TERMINAL_HEIGHT = 100
-const MAX_TERMINAL_HEIGHT = 600
-const MIN_CHAT_WIDTH = 250
-const MAX_CHAT_WIDTH = 600
+// --- Global State ---
+// Kept global to maintain state across component re-mounts (singleton pattern)
+const sidebarWidth = ref<number>(LAYOUT_CONFIG.SIDEBAR.INITIAL)
+const terminalHeight = ref<number>(LAYOUT_CONFIG.TERMINAL.INITIAL)
+const preferredChatWidth = ref<number>(LAYOUT_CONFIG.CHAT.INITIAL)
 
-const isDragging = ref(false)
+const isChatOpen = ref<boolean>(true)
+const isChatFullScreen = ref<boolean>(false)
+const isSidebarVisible = ref<boolean>(true)
+const isMobile = ref<boolean>(false)
+const isDragging = ref<boolean>(false)
+
+// --- Logic Implementation ---
 
 const updateMobileState = () => {
-  const mobile = window.innerWidth < 768
+  if (typeof window === 'undefined') return
+
+  const mobile = window.innerWidth < LAYOUT_CONFIG.MOBILE_BREAKPOINT
   if (mobile !== isMobile.value) {
     isMobile.value = mobile
-    // Reset states when switching modes
+    // Reset layout state when switching modes
     if (mobile) {
-      isSidebarVisible.value = false // Hidden by default on mobile
-      isChatFullScreen.value = true // Chat is always full screen on mobile when open
-      isChatOpen.value = false // Closed by default on mobile
+      isSidebarVisible.value = false
+      isChatFullScreen.value = true
+      isChatOpen.value = false
     } else {
       isSidebarVisible.value = true
       isChatFullScreen.value = false
@@ -37,87 +43,101 @@ const updateMobileState = () => {
 }
 
 export const useLayout = () => {
-  // Initialize mobile state
-  // We can't do this immediately in SSR context but this is a client-side app
+  // Ensure we track window resize for mobile responsiveness
   if (typeof window !== 'undefined') {
-    // Check initial
-    updateMobileState() // Initial check might need to be in a mounted hook or similar if used globally,
-                        // but since this is a global state defined outside the function,
-                        // we need to be careful about when it runs.
-                        // For simplicity, let's rely on the component using it to trigger a check or listeners.
+    // We can use the onMounted/onUnmounted hooks here because
+    // useLayout is intended to be used within a component setup()
+    onMounted(() => {
+      updateMobileState()
+      window.addEventListener('resize', updateMobileState)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', updateMobileState)
+    })
   }
 
-  // To ensure we track resize, we should probably set up the listener once.
-  // Since this is a singleton-ish composable (state outside), we can set up listeners globally if we want,
-  // or just rely on the App.vue to mount it.
+  // --- Resize Handlers ---
 
-  const startResize = (type: 'sidebar' | 'terminal' | 'chat') => {
-    if (isMobile.value) return // Disable resizing on mobile
+  const handleSidebarResize = (e: MouseEvent) => {
+    const newWidth = Math.max(
+      LAYOUT_CONFIG.SIDEBAR.MIN,
+      Math.min(e.clientX, LAYOUT_CONFIG.SIDEBAR.MAX)
+    )
+    sidebarWidth.value = newWidth
+  }
+
+  const handleTerminalResize = (e: MouseEvent) => {
+    const windowHeight = window.innerHeight
+    const rawHeight = windowHeight - e.clientY - LAYOUT_CONFIG.TERMINAL.FOOTER_HEIGHT
+    const newHeight = Math.max(
+      LAYOUT_CONFIG.TERMINAL.MIN,
+      Math.min(rawHeight, LAYOUT_CONFIG.TERMINAL.MAX)
+    )
+    terminalHeight.value = newHeight
+  }
+
+  const handleChatResize = (e: MouseEvent) => {
+    const windowWidth = window.innerWidth
+    const rawWidth = windowWidth - e.clientX
+
+    // If dragging chat, exit fullscreen to allow resizing
+    if (isChatFullScreen.value) isChatFullScreen.value = false
+
+    // Ensure chat is open if we are resizing it
+    if (!isChatOpen.value) isChatOpen.value = true
+
+    const newWidth = Math.max(
+      LAYOUT_CONFIG.CHAT.MIN,
+      Math.min(rawWidth, LAYOUT_CONFIG.CHAT.MAX)
+    )
+    preferredChatWidth.value = newWidth
+  }
+
+  const startResize = (target: ResizeTarget) => {
+    if (isMobile.value) return
 
     isDragging.value = true
+    document.body.style.userSelect = 'none'
+    document.body.style.cursor = target === 'terminal' ? 'row-resize' : 'col-resize'
 
     const onMouseMove = (e: MouseEvent) => {
       e.preventDefault()
-      if (type === 'sidebar') {
-        let newWidth = e.clientX
-        if (newWidth < MIN_SIDEBAR_WIDTH) newWidth = MIN_SIDEBAR_WIDTH
-        if (newWidth > MAX_SIDEBAR_WIDTH) newWidth = MAX_SIDEBAR_WIDTH
-        sidebarWidth.value = newWidth
-      } else if (type === 'terminal') {
-        // Calculate height from bottom
-        const windowHeight = window.innerHeight
-        let newHeight = windowHeight - e.clientY
-        // Adjust for footer if necessary (approx 24px)
-        const footerHeight = 24
-        newHeight = newHeight - footerHeight
-
-        if (newHeight < MIN_TERMINAL_HEIGHT) newHeight = MIN_TERMINAL_HEIGHT
-        if (newHeight > MAX_TERMINAL_HEIGHT) newHeight = MAX_TERMINAL_HEIGHT
-        terminalHeight.value = newHeight
-      } else if (type === 'chat') {
-        // If resizing, we are defining the preferred width
-        const windowWidth = window.innerWidth
-        let newWidth = windowWidth - e.clientX
-
-        // If dragging, we probably want to exit full screen to allow resizing
-        if (isChatFullScreen.value) isChatFullScreen.value = false
-
-        if (newWidth < MIN_CHAT_WIDTH) newWidth = MIN_CHAT_WIDTH
-        if (newWidth > MAX_CHAT_WIDTH) newWidth = MAX_CHAT_WIDTH
-
-        preferredChatWidth.value = newWidth
-
-        // Ensure it's open if we are dragging it
-        if (!isChatOpen.value) isChatOpen.value = true
+      switch (target) {
+        case 'sidebar':
+          handleSidebarResize(e)
+          break
+        case 'terminal':
+          handleTerminalResize(e)
+          break
+        case 'chat':
+          handleChatResize(e)
+          break
       }
     }
 
     const onMouseUp = () => {
       isDragging.value = false
+      document.body.style.userSelect = ''
+      document.body.style.cursor = ''
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
     }
 
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
-
-    // Set appropriate cursor globally during drag
-    document.body.style.userSelect = 'none'
-    document.body.style.cursor = type === 'terminal' ? 'row-resize' : 'col-resize'
   }
+
+  // --- Toggles ---
 
   const toggleFullScreenChat = () => {
     isChatFullScreen.value = !isChatFullScreen.value
-    // If we go full screen, we must ensure it is open
     if (isChatFullScreen.value) isChatOpen.value = true
   }
 
   const toggleMinimizeChat = () => {
     isChatOpen.value = !isChatOpen.value
-    // On mobile, if we close chat, we just close it.
-    // On desktop, we reset fullscreen.
+    // When closing on desktop, also reset fullscreen
     if (!isChatOpen.value && !isMobile.value) {
       isChatFullScreen.value = false
     }
@@ -127,23 +147,17 @@ export const useLayout = () => {
     isSidebarVisible.value = !isSidebarVisible.value
   }
 
-  // Determine effective width based on responsive state
+  // --- Computed ---
+
   const effectiveChatWidth = computed(() => {
     if (!isChatOpen.value) return 0
-    // On mobile, chat takes full width if open
     if (isMobile.value) return window.innerWidth
     if (isChatFullScreen.value) return window.innerWidth - sidebarWidth.value
     return preferredChatWidth.value
   })
 
-  // Listen for resize to update mobile state
-  if (typeof window !== 'undefined') {
-     window.addEventListener('resize', updateMobileState)
-     // Initial check
-     updateMobileState()
-  }
-
   return {
+    // State
     sidebarWidth,
     terminalHeight,
     preferredChatWidth,
@@ -153,6 +167,8 @@ export const useLayout = () => {
     isDragging,
     isMobile,
     isSidebarVisible,
+
+    // Actions
     startResize,
     toggleFullScreenChat,
     toggleMinimizeChat,
