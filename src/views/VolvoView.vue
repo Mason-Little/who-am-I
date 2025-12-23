@@ -7,10 +7,22 @@ import MediaItem from '@/components/ui/MediaItem.vue'
 import { getCloudinaryUrl } from '@/helpers/cloudinary'
 
 const specs = {
-  engine: ['5.3L LS V8', 'Twin Turbo Setup', 'Custom Intake Manifold', 'Standalone ECU'],
-  transmission: ['T56 6-Speed Manual', 'Custom Driveshaft', 'Upgraded Clutch'],
-  suspension: ['Coilover Conversion', 'Adjustable Control Arms', 'Upgraded Sway Bars'],
-  exterior: ['Custom Widebody', 'Period-Correct Wheels', 'Complete Respray'],
+  engine: [
+    '5.3L LS V8',
+    'Custom Fabricated Twin Turbo Setup',
+    'Holley Everything',
+    'Holley Standalone ECU',
+  ],
+  transmission: ['TKX 5-Speed Manual', 'Custom Driveshaft', 'Upgraded Clutch'],
+  suspension: [
+    'Coilover Conversion',
+    'Adjustable Control Arms',
+    'Upgraded Sway Bars',
+    'Wilwood Brakes',
+    'Forged Rear Axles',
+    'Limited Slip Differential',
+  ],
+  exterior: ['Forest Green Wrap', 'Period-Correct Wheels', 'Sleeper'],
 }
 
 const sections = [
