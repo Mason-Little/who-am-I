@@ -3,6 +3,8 @@ import PageLayout from '@/components/layout/PageLayout.vue'
 import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProseBlock from '@/components/ui/ProseBlock.vue'
+import MediaItem from '@/components/ui/MediaItem.vue'
+import { getCloudinaryUrl } from '@/helpers/cloudinary'
 
 const sections = [
   { id: 'vision', label: 'The Vision' },
@@ -21,6 +23,13 @@ const sections = [
     <PageHeader
       title="How We Built Agent Scalar"
       subtitle="Teaching AI to Actually Do Things With APIs"
+    />
+
+    <MediaItem
+      type="video"
+      label="Agent Scalar Demo"
+      :src="getCloudinaryUrl('Screen_Recording_2025-09-29_at_10.34.14_PM_u76mhc', 'video')"
+      class="mb-12"
     />
 
     <!-- The Vision -->
