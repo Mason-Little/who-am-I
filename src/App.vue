@@ -176,7 +176,14 @@ const getFileName = (path: string) => {
       class="h-6 bg-accent text-bg-primary flex items-center px-4 text-xs justify-between select-none shrink-0"
     >
       <div class="flex gap-4">
-        <span class="flex items-center"><span class="mr-1">⑂</span> main*</span>
+        <a
+          href="https://github.com/Mason-Little/who-am-I/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center hover:bg-white/10 px-1 -mx-1 transition-colors cursor-pointer"
+        >
+          <span class="mr-1">⑂</span> main*
+        </a>
         <span class="flex items-center"><span class="mr-1">⊗</span> 0</span>
         <span class="flex items-center"><span class="mr-1">⚠</span> 0</span>
       </div>
