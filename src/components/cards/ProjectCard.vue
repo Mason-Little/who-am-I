@@ -17,24 +17,31 @@ import IconChevronRight from '@/components/icons/IconChevronRight.vue'
 
 <template>
   <article
-    class="group relative bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent/5"
+    class="group relative isolate bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent/5"
   >
     <!-- Accent glow effect on hover -->
     <div
-      class="absolute inset-0 rounded-lg bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+      class="absolute inset-0 -z-10 rounded-lg bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
     ></div>
 
-    <div class="relative z-10 space-y-4">
+    <div class="space-y-4">
       <!-- Header -->
       <div class="flex items-start justify-between gap-4">
         <h3
           class="text-xl font-semibold text-text-primary group-hover:text-accent transition-colors"
         >
-          {{ title }}
+          <router-link
+            v-if="routePath"
+            :to="routePath"
+            class="before:absolute before:inset-0 focus:outline-none"
+          >
+            {{ title }}
+          </router-link>
+          <span v-else>{{ title }}</span>
         </h3>
 
         <!-- Action Links -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="relative z-10 flex items-center gap-2 shrink-0">
           <a
             v-if="githubUrl"
             :href="githubUrl"
@@ -76,7 +83,7 @@ import IconChevronRight from '@/components/icons/IconChevronRight.vue'
         <span
           v-for="tag in tags"
           :key="tag"
-          class="px-2.5 py-1 text-xs rounded bg-surface-primary text-text-dim border border-border group-hover:border-accent/30 transition-colors"
+          class="relative z-10 px-2.5 py-1 text-xs rounded bg-surface-primary text-text-dim border border-border group-hover:border-accent/30 transition-colors"
         >
           {{ tag }}
         </span>
