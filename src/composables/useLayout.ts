@@ -62,7 +62,7 @@ export const useLayout = () => {
   const handleSidebarResize = (e: MouseEvent) => {
     const newWidth = Math.max(
       LAYOUT_CONFIG.SIDEBAR.MIN,
-      Math.min(e.clientX, LAYOUT_CONFIG.SIDEBAR.MAX)
+      Math.min(e.clientX, LAYOUT_CONFIG.SIDEBAR.MAX),
     )
     sidebarWidth.value = newWidth
   }
@@ -72,7 +72,7 @@ export const useLayout = () => {
     const rawHeight = windowHeight - e.clientY - LAYOUT_CONFIG.TERMINAL.FOOTER_HEIGHT
     const newHeight = Math.max(
       LAYOUT_CONFIG.TERMINAL.MIN,
-      Math.min(rawHeight, LAYOUT_CONFIG.TERMINAL.MAX)
+      Math.min(rawHeight, LAYOUT_CONFIG.TERMINAL.MAX),
     )
     terminalHeight.value = newHeight
   }
@@ -87,10 +87,7 @@ export const useLayout = () => {
     // Ensure chat is open if we are resizing it
     if (!isChatOpen.value) isChatOpen.value = true
 
-    const newWidth = Math.max(
-      LAYOUT_CONFIG.CHAT.MIN,
-      Math.min(rawWidth, LAYOUT_CONFIG.CHAT.MAX)
-    )
+    const newWidth = Math.max(LAYOUT_CONFIG.CHAT.MIN, Math.min(rawWidth, LAYOUT_CONFIG.CHAT.MAX))
     preferredChatWidth.value = newWidth
   }
 
@@ -172,6 +169,6 @@ export const useLayout = () => {
     startResize,
     toggleFullScreenChat,
     toggleMinimizeChat,
-    toggleSidebar
+    toggleSidebar,
   }
 }

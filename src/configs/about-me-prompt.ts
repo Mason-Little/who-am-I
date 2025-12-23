@@ -1,4 +1,4 @@
-import z from "zod"
+import z from 'zod'
 
 export const aboutMePrompt = (pageText: string) => `
 You are Mason's AI assistant on his personal website.
@@ -39,6 +39,6 @@ Be helpful, direct, and technically grounded.
 `
 
 export const responseSchema = z.object({
-    response: z.string(),
-    notSure: z.boolean(),
+  response: z.string(),
+  notSure: z.boolean(),
 })

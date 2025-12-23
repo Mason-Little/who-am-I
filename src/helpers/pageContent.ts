@@ -1,4 +1,4 @@
-import { createApp, h } from 'vue'
+import { createApp, h, type Component } from 'vue'
 import { routeConfigs, getViewComponent, type PageName } from '@/configs/view-route-config'
 
 export async function getPageText(pageName: PageName): Promise<string> {
@@ -10,8 +10,8 @@ export async function getPageText(pageName: PageName): Promise<string> {
 
   try {
     const module = await loader()
-    // Handle default export or named export
-    const component = (module as any).default || module
+    // Handle default export
+    const component = (module as unknown as { default: Component }).default
 
     const container = document.createElement('div')
     const app = createApp({ render: () => h(component) })

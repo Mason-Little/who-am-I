@@ -52,7 +52,8 @@ export const routeConfigs: RouteConfig[] = [
     fileName: 'home.tsx',
     fileType: 'TSX',
     title: 'Home',
-    description: "Landing page with Mason's name, title (Full Stack Engineer, AI Enthusiast), and links to projects/about.",
+    description:
+      "Landing page with Mason's name, title (Full Stack Engineer, AI Enthusiast), and links to projects/about.",
     viewPath: 'HomeView.vue',
   },
   {
@@ -61,7 +62,8 @@ export const routeConfigs: RouteConfig[] = [
     fileName: 'about.md',
     fileType: 'MD',
     title: 'About',
-    description: 'Detailed bio including: origin story (Vancouver/Squamish, Lego Technic, Python), mentorship with Marc Laventure, Scalar work (AI documentation, Mistral fine-tuning, Agent Scalar multi-agent system), Volvo project, and full tech stack.',
+    description:
+      'Detailed bio including: origin story (Vancouver/Squamish, Lego Technic, Python), mentorship with Marc Laventure, Scalar work (AI documentation, Mistral fine-tuning, Agent Scalar multi-agent system), Volvo project, and full tech stack.',
     viewPath: 'AboutView.vue',
   },
   {
@@ -79,11 +81,12 @@ export const routeConfigs: RouteConfig[] = [
     fileName: 'project-index.ts',
     fileType: 'TS',
     title: 'Projects',
-    description: "Collection of Mason's software engineering projects including Content Writer, Agent Scalar, and portfolio work.",
+    description:
+      "Collection of Mason's software engineering projects including Content Writer, Agent Scalar, and portfolio work.",
     viewPath: 'ProjectIndex.vue',
     parent: 'projects',
   },
-    {
+  {
     path: '/software/agent-scalar',
     name: 'AgentScalar', // Unique name
     fileName: 'agent-scalar.ts', // Dummy file name for IDE feel
@@ -92,10 +95,10 @@ export const routeConfigs: RouteConfig[] = [
     description: 'A sophisticated multi-agent system using PG Vector, TypeScript, and JSON Schema.',
     parent: 'projects',
     projectData: {
-        tags: ['TypeScript', 'PGVector', 'Multi-Agent', 'JSON Schema', 'AI Orchestration'],
-    }
+      tags: ['TypeScript', 'PGVector', 'Multi-Agent', 'JSON Schema', 'AI Orchestration'],
+    },
   },
-      {
+  {
     path: '/', // Link to home for "Personal Website" card
     name: 'PersonalWebsite', // Unique name - careful with duplicates in route matching, maybe use a different "id" for cards vs routes
     fileName: 'my-website.tsx',
@@ -104,27 +107,27 @@ export const routeConfigs: RouteConfig[] = [
     description: 'This very website! A developer portfolio designed as an IDE interface.',
     parent: 'projects',
     projectData: {
-        tags: ['Vue.js', 'TypeScript', 'Groq AI', 'Tailwind CSS'],
-        githubUrl: 'https://github.com/Mason-Little/my-website',
-        liveUrl: '/'
-    }
+      tags: ['Vue.js', 'TypeScript', 'Groq AI', 'Tailwind CSS'],
+      githubUrl: 'https://github.com/Mason-Little/my-website',
+      liveUrl: '/',
+    },
   },
-    {
+  {
     path: '/projects/volvo',
     name: 'VolvoProject',
     fileName: 'volvo_240.log',
     fileType: 'LOG',
     title: 'Volvo 240 LS Swap',
-    description: "Mason's 1992 Volvo 240 project - LS-swapped with Twin Turbo 5.3L engine. Mechanical/car enthusiast content.",
+    description:
+      "Mason's 1992 Volvo 240 project - LS-swapped with Twin Turbo 5.3L engine. Mechanical/car enthusiast content.",
     viewPath: 'VolvoView.vue',
     parent: 'projects',
     projectData: {
       tags: ['Volvo', '240', 'LS V8', 'Swap', 'Engine', 'Car'],
       githubUrl: 'https://github.com/Mason-Little/my-website',
-      liveUrl: '/projects/volvo' // Self-referential for the project page
-    }
+      liveUrl: '/projects/volvo', // Self-referential for the project page
+    },
   },
-
 ]
 
 // Note: The above "ProjectIndex" items like 'ContentWriter' might clutter the router if we blindly map them.
@@ -161,8 +164,8 @@ export const pageNames = routeConfigs.map((r) => r.name) as [string, ...string[]
 
 export const viewDescriptions = z.object(
   Object.fromEntries(
-    routeConfigs.map((r) => [r.name.toLowerCase(), z.string().describe(r.description)])
-  ) as Record<string, z.ZodString>
+    routeConfigs.map((r) => [r.name.toLowerCase(), z.string().describe(r.description)]),
+  ) as Record<string, z.ZodString>,
 )
 
 export type PageName = (typeof routeConfigs)[number]['name']

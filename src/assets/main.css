@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Tokio Night Color Palette Mapping */
@@ -25,22 +25,22 @@
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 
   /* VS Code Refined Theme Definitions */
-  --color-bg-primary: #0F1115;    /* Deep charcoal - Main background */
-  --color-bg-secondary: #161A22;  /* Panel/Card */
-  --color-bg-tertiary: #1D2330;   /* Elevated/Hover */
+  --color-bg-primary: #0f1115; /* Deep charcoal - Main background */
+  --color-bg-secondary: #161a22; /* Panel/Card */
+  --color-bg-tertiary: #1d2330; /* Elevated/Hover */
 
-  --color-text-primary: #E5E7EB;  /* Headlines, main content */
-  --color-text-secondary: #9CA3AF;/* Descriptions, metadata */
-  --color-text-dim: #6B7280;      /* Placeholder, inactive */
+  --color-text-primary: #e5e7eb; /* Headlines, main content */
+  --color-text-secondary: #9ca3af; /* Descriptions, metadata */
+  --color-text-dim: #6b7280; /* Placeholder, inactive */
 
-  --color-accent: #4FC3F7;        /* Mason Blue - Primary Action */
-  --color-accent-hover: #0ea5e9;  /* Darker Blue for hover states */
-  --color-accent-secondary: #2DD4BF; /* Teal - System Status */
+  --color-accent: #4fc3f7; /* Mason Blue - Primary Action */
+  --color-accent-hover: #0ea5e9; /* Darker Blue for hover states */
+  --color-accent-secondary: #2dd4bf; /* Teal - System Status */
 
-  --color-border: #262C3A;        /* Soft Border */
-  --color-success: #34D399;       /* Green */
-  --color-warning: #FBBF24;       /* Warning / Tip */
-  --color-error: #F87171;         /* Error */
+  --color-border: #262c3a; /* Soft Border */
+  --color-success: #34d399; /* Green */
+  --color-warning: #fbbf24; /* Warning / Tip */
+  --color-error: #f87171; /* Error */
 }
 
 body {

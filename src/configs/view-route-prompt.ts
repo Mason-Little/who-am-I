@@ -1,6 +1,5 @@
 import { routeConfigs } from './view-route-config'
 
-
 export const viewRouteAgentPrompt = `
 You are the router agent for Mason's personal website. Your job is to determine which page contains the most relevant context for answering a user's question.
 

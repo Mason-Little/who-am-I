@@ -8,12 +8,14 @@ const routes: RouteRecordRaw[] = routeConfigs
     const componentLoader = getViewComponent(config.viewPath!)
 
     if (!componentLoader) {
-      console.warn(`View component not found for route: ${config.name} (viewPath: ${config.viewPath})`)
+      console.warn(
+        `View component not found for route: ${config.name} (viewPath: ${config.viewPath})`,
+      )
       return {
         path: config.path,
         name: config.name,
         component: { template: '<div>View not found</div>' },
-         meta: { title: config.title },
+        meta: { title: config.title },
       }
     }
 
