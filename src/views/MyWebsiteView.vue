@@ -63,6 +63,8 @@ const sections = [
           <li><strong>Tailwind CSS</strong> (v4) for rapid, beautiful styling.</li>
           <li><strong>Vite</strong> for lightning-fast builds.</li>
           <li><strong>Motion</strong> for those smooth, premium animations.</li>
+          <li><strong>Cloudinary</strong> for optimized image and video delivery.</li>
+          <li><strong>Groq</strong> for blazing-fast AI inference.</li>
         </ul>
       </ProseBlock>
     </section>
