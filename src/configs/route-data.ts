@@ -124,6 +124,7 @@ export const routeConfigs: RouteConfig[] = [
     parent: 'projects',
     projectData: {
       tags: ['Maps', 'Traffic', 'Navigation', 'App'],
+      githubUrl: 'https://github.com/Mason-Little/a-better-way',
     },
   },
 ]
