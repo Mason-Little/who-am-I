@@ -3,18 +3,21 @@ import PageLayout from '@/components/layout/PageLayout.vue'
 import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/ui/SectionHeader.vue'
 import ProseBlock from '@/components/ui/ProseBlock.vue'
+import AgentScalarFlow from '@/components/AgentScalarFlow.vue'
 import MediaItem from '@/components/ui/MediaItem.vue'
+import CodeBlock from '@/components/ui/CodeBlock.vue'
 import { getCloudinaryUrl } from '@/helpers/cloudinary'
 
 const sections = [
-  { id: 'vision', label: 'The Vision' },
-  { id: 'foundation', label: 'Foundation Problems' },
-  { id: 'upload', label: 'Upload Phase' },
-  { id: 'query', label: 'Query Phase' },
-  { id: 'execution', label: 'Execution Phase' },
-  { id: 'recovery', label: 'Error Recovery' },
-  { id: 'flow', label: 'Full Flow' },
-  { id: 'learnings', label: 'What We Learned' },
+  { id: 'early-approach', label: 'Early Approach' },
+  { id: 'retrieval', label: 'Retrieval Problems' },
+  { id: 'example-queries', label: 'Example Queries' },
+  { id: 'dependencies', label: 'Dependency Mapping' },
+  { id: 'query-handling', label: 'Query Handling' },
+  { id: 'planning', label: 'Planning' },
+  { id: 'execution', label: 'Execution' },
+  { id: 'formatting', label: 'Formatting' },
+  { id: 'flow', label: 'Example Flow' },
 ]
 </script>
 
@@ -32,543 +35,436 @@ const sections = [
       class="mb-12"
     />
 
-    <!-- The Vision -->
-    <section id="vision" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="The Vision" />
+    <div class="mb-12">
+      <SectionHeader title="Interactive Flow" class="mb-4" />
+      <AgentScalarFlow />
+    </div>
+
+    <!-- Early Approach -->
+    <section id="early-approach" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Early Approach and Scaling Limits" />
       <ProseBlock>
-        <p>It started with a pretty simple question from Marc in 2024:</p>
-        <blockquote class="border-l-4 border-accent pl-4 italic text-text-secondary my-4">
-          "What if you could just chat with an API?"
-        </blockquote>
         <p>
-          Type something like <em>"get all my songs in the dance playlist"</em> and watch it happen.
-          No documentation. No curl commands. Just conversation.
+          The first version used a single language model with the full OpenAPI spec passed in as
+          context.
+        </p>
+        <p>For simple requests and smaller OpenAPI specs, this worked.</p>
+        <p>
+          As soon as users asked multi-step questions or requested formatted output, the model
+          struggled.
+        </p>
+        <p>
+          It also had way too much context. Each prompt pulled in the entire OpenAPI document. As
+          OpenAPI specs got larger, this wasted tokens on information that did not matter for the
+          current request.
+        </p>
+        <p>
+          During testing, the agent felt like another question-and-answer wrapper. Execution was
+          meant to be the core feature.
         </p>
         <p class="text-text-secondary">
-          We learned very quickly that this was anything but simple.
+          This pushed us away from a single-model design and toward a more structured system.
         </p>
       </ProseBlock>
     </section>
 
-    <!-- Foundation Problems -->
-    <section id="foundation" class="space-y-8 scroll-mt-20">
-      <SectionHeader title="Part 1: The Foundation Problems" />
+    <!-- Retrieval Problems -->
+    <section id="retrieval" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Why Retrieval Alone Did Not Work" />
+      <ProseBlock>
+        <p>
+          The assumption was that embedding the OpenAPI document would allow us to retrieve relevant
+          operations.
+        </p>
+        <p>This did not work.</p>
+        <p>Embeddings hinge on the idea that words have meaning in a vector space, in English.</p>
+      </ProseBlock>
 
-      <!-- Single-Agent Trap -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">The Single-Agent Trap</h3>
-        <ProseBlock>
-          <p>
-            Our first approach was the obvious one: give a single LLM the OpenAPI spec and let it
-            handle everything.
-          </p>
-          <p>For basic queries, this actually worked fine.</p>
-          <p>
-            But we didn't want Agent Scalar to just answer questions. We wanted it to
-            <strong>do things</strong>:
-          </p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>build multi-step workflows</li>
-            <li>execute chained API requests</li>
-            <li>generate tables</li>
-            <li>create charts and visualizations</li>
-          </ul>
-          <p>
-            Once you ask a single model to do all of that, things start to fall apart. Context
-            windows get bloated, responses hallucinate, and anything involving multiple steps
-            becomes unreliable.
-          </p>
-          <p>
-            On top of that, we really didn't want this to turn into just another chatbot or GPT
-            wrapper. The whole point was execution.
-          </p>
-          <p class="text-text-secondary">
-            That pushed us away from a single-agent design pretty early.
-          </p>
-        </ProseBlock>
-      </div>
+      <CodeBlock language="http" :code="`GET /playlists/{playlist_id}`" />
 
-      <!-- The Scaling Problem -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">The Scaling Problem</h3>
-        <ProseBlock>
-          <p>Even if the single-model approach worked perfectly, it still wouldn't scale.</p>
-          <p>
-            Shipping a 50KB OpenAPI document on <strong>every request</strong>, for
-            <strong>every user</strong>, with APIs that might have hundreds of endpoints? That's a
-            nightmare. Token costs explode. Latency gets bad fast.
-          </p>
-          <p>So we tried the obvious next step: RAG.</p>
-          <p>Store the API in embeddings. Retrieve only what's relevant.</p>
-          <p class="text-text-secondary">In practice… it didn't work very well.</p>
-        </ProseBlock>
-      </div>
+      <ProseBlock>
+        <p>does not have meaning.</p>
+        <p>
+          Even when we included operation descriptions, which are meant to be short and concise, the
+          mapping was still poor. It does not reasonably map to:
+        </p>
+      </ProseBlock>
 
-      <!-- Why RAG Breaks -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Why RAG Breaks on APIs</h3>
-        <ProseBlock>
-          <p>
-            RAG works great for PDFs and docs because they're written for humans. They have
-            sentences, paragraphs, and actual semantic structure.
-          </p>
-          <p>OpenAPI documents don't.</p>
-          <p>They're structured data. Most operations boil down to something like:</p>
-        </ProseBlock>
-
-        <div
-          class="bg-surface-secondary/50 rounded-lg p-4 font-mono text-sm text-text-secondary border border-border"
-        >
-          GET /playlists/{playlist_id} — Get playlist
-        </div>
-
-        <ProseBlock>
-          <p>
-            When a user asks <em>"get all my songs in the dance playlist"</em>, the text similarity
-            to that is basically zero.
-          </p>
-          <p>APIs aren't PDFs. Treating them like they are just doesn't work.</p>
-          <p class="text-accent font-medium">
-            What we needed was a bridge between how humans talk and how APIs are structured.
-          </p>
-        </ProseBlock>
-      </div>
-    </section>
-
-    <!-- Upload Phase -->
-    <section id="upload" class="space-y-8 scroll-mt-20">
-      <SectionHeader title="Part 2: The Upload Phase" />
+      <CodeBlock language="text" :code="`get all my songs in the dance playlist`" />
 
       <ProseBlock>
         <p>
-          A lot of the real work in Agent Scalar happens <strong>before</strong> a user ever sends a
-          message.
+          This caused similarity scores to cluster too closely together, making it hard to
+          confidently select the highest-confidence operation.
+        </p>
+        <p class="text-text-secondary">
+          We still needed retrieval for pricing and scale reasons, but we needed to build our own
+          retrieval layer that augmented the OpenAPI document rather than embedding it directly.
+        </p>
+      </ProseBlock>
+    </section>
+
+    <!-- Example Queries -->
+    <section id="example-queries" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Generating Example Queries" />
+      <ProseBlock>
+        <p>Instead of embedding raw API definitions, we generate example user queries.</p>
+        <p>
+          Using a language model, each operation is converted into multiple prompts that represent
+          how a user might ask for it.
+        </p>
+        <p>For example, an operation like:</p>
+      </ProseBlock>
+
+      <CodeBlock language="http" :code="`GET /playlists/{playlist_id}`" />
+
+      <ProseBlock>
+        <p>becomes stored queries such as:</p>
+      </ProseBlock>
+
+      <CodeBlock
+        language="text"
+        :code="`get all my songs in the dance playlist
+show tracks from my workout playlist
+list songs in my favorites`"
+      />
+
+      <ProseBlock>
+        <p>Only these generated queries are embedded.</p>
+        <p>At query time, user input is matched against human language instead of API structure.</p>
+        <p class="text-accent font-medium">This significantly improved retrieval accuracy.</p>
+      </ProseBlock>
+    </section>
+
+    <!-- Dependency Mapping -->
+    <section id="dependencies" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Dependency Mapping" />
+      <ProseBlock>
+        <p>Retrieval alone is not enough.</p>
+        <p>
+          Many operations require identifiers, and we do not want users to walk step by step through
+          an API. We want it to just work no matter what the user asks.
+        </p>
+        <p>During upload, we analyze the API and build a dependency graph.</p>
+        <p>
+          If an operation requires a value like
+          <code class="bg-surface-secondary px-2 py-1 rounded text-accent">playlist_id</code>, we
+          record which other operations can produce it.
+        </p>
+        <p>Conceptually:</p>
+      </ProseBlock>
+
+      <CodeBlock
+        language="text"
+        :code="`/playlists/{playlist_id}
+  depends on
+/playlists
+/search`"
+      />
+
+      <ProseBlock>
+        <p class="text-text-secondary">
+          This information is used during planning. Execution does not guess missing parameters.
+        </p>
+      </ProseBlock>
+    </section>
+
+    <!-- Query Handling -->
+    <section id="query-handling" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Query Handling" />
+      <ProseBlock>
+        <p>User input is normalized before retrieval.</p>
+        <p>A request chain like:</p>
+      </ProseBlock>
+
+      <CodeBlock
+        language="text"
+        :code="`update my playlist name then get top songs for that artist`"
+      />
+
+      <ProseBlock>
+        <p>would produce poor embedding results if treated as a single query.</p>
+        <p>
+          To handle this, we run user input through a tiny language model that takes in chat history
+          and produces multiple database queries.
         </p>
         <p>
-          When someone uploads an OpenAPI document, we do a few things up front so the system is
-          actually usable later.
+          This allows each step in the request chain to retrieve results independently and with
+          higher confidence.
+        </p>
+        <p>A message like:</p>
+      </ProseBlock>
+
+      <CodeBlock language="text" :code="`delete them all`" />
+
+      <ProseBlock>
+        <p>is rewritten into:</p>
+      </ProseBlock>
+
+      <CodeBlock language="text" :code="`delete playlists`" />
+
+      <ProseBlock>
+        <p class="text-text-secondary">
+          Complex requests are split into smaller ones before retrieval.
         </p>
       </ProseBlock>
-
-      <!-- Step 1 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 1: Generating Example Questions</h3>
-        <ProseBlock>
-          <p>We stopped relying on API documentation text for embeddings entirely.</p>
-          <p>
-            Instead, on upload, we run each operation through a model whose only job is to generate
-            example questions a human <em>might</em> ask.
-          </p>
-          <p>Instead of embedding:</p>
-        </ProseBlock>
-
-        <div
-          class="bg-surface-secondary/50 rounded-lg p-4 font-mono text-sm text-text-secondary border border-border"
-        >
-          GET /playlists/{playlist_id} — Get playlist
-        </div>
-
-        <ProseBlock>
-          <p>We embed things like:</p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>"get all my songs in the dance playlist"</li>
-            <li>"show me what's in my workout playlist"</li>
-            <li>"list tracks from my favorites"</li>
-          </ul>
-          <p>Now we're matching user queries against <strong>human language</strong>, not YAML.</p>
-          <p>
-            This runs once on upload, so the cost is amortized, and retrieval quality goes way up.
-          </p>
-        </ProseBlock>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 2: Building the Dependency Graph</h3>
-        <ProseBlock>
-          <p>Even with perfect semantic matching, there's still a big problem.</p>
-          <p>If a user says:</p>
-          <blockquote class="border-l-4 border-accent pl-4 italic text-text-secondary my-4">
-            "get all my songs in the dance playlist"
-          </blockquote>
-          <p>
-            The endpoint we find needs a
-            <code class="bg-surface-secondary px-2 py-1 rounded text-accent">playlist_id</code>. The
-            user doesn't have that, and they shouldn't need to.
-          </p>
-          <p>So during upload, we also build a dependency map across the API.</p>
-          <p>
-            For every operation that requires an identifier, we store which other operations can
-            discover it. For example:
-          </p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>
-              <code class="bg-surface-secondary px-2 py-1 rounded">/playlists/{playlist_id}</code>
-              depends on <code class="bg-surface-secondary px-2 py-1 rounded">/playlists</code> or
-              <code class="bg-surface-secondary px-2 py-1 rounded">/search</code>
-            </li>
-          </ul>
-          <p>
-            This lets the system reason about
-            <strong>how to get from zero information to a completed task</strong>.
-          </p>
-          <p class="text-text-secondary">This logic lives entirely in planning — not execution.</p>
-        </ProseBlock>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 3: Storing Embeddings</h3>
-        <ProseBlock>
-          <p>
-            Each generated example question gets embedded and stored alongside its operation and
-            dependency data in PGVector.
-          </p>
-          <p>All of this happens once, at upload time.</p>
-        </ProseBlock>
-      </div>
     </section>
 
-    <!-- Query Phase -->
-    <section id="query" class="space-y-8 scroll-mt-20">
-      <SectionHeader title="Part 3: The Query Phase" />
-
+    <!-- Planning -->
+    <section id="planning" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Planning" />
       <ProseBlock>
-        <p>When a user sends a message, it doesn't go straight to search.</p>
-        <p>First, it gets cleaned up.</p>
+        <p>Planning and execution are separate concerns.</p>
+        <p>The planning agent produces an ordered list of steps.</p>
+        <p>Each step performs exactly one action.</p>
+        <p>Example plan:</p>
       </ProseBlock>
 
-      <!-- Step 1 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 1: The Summarize Agent</h3>
-        <ProseBlock>
-          <p>Human input is messy. Conversations are full of shortcuts.</p>
-          <p>Example:</p>
-        </ProseBlock>
-
-        <div class="bg-surface-secondary/50 rounded-lg p-4 space-y-2 border border-border">
-          <p class="text-text-secondary">
-            <span class="text-accent">User:</span> <em>How do I list playlists?</em>
-          </p>
-          <p class="text-text-secondary">
-            <span class="text-text-primary">Agent:</span> <em>lists playlists</em>
-          </p>
-          <p class="text-text-secondary">
-            <span class="text-accent">User:</span> <em>Delete them all</em>
-          </p>
-        </div>
-
-        <ProseBlock>
-          <p>"Delete them all" doesn't match any endpoint. There's no keyword overlap at all.</p>
-          <p>So before we hit embeddings, we normalize the query.</p>
-          <p>The summarize agent:</p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>strips filler</li>
-            <li>resolves pronouns</li>
-            <li>pulls context from conversation history</li>
-            <li>splits multi-step requests</li>
-          </ul>
-          <p>So <em>"delete them all"</em> becomes <em>"delete playlist"</em>.</p>
-          <p class="font-medium">Only then does it hit search.</p>
-        </ProseBlock>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 2: Query Chunking</h3>
-        <ProseBlock>
-          <p>If a request is complex, we break it apart before searching.</p>
-          <p>Something like:</p>
-          <blockquote class="border-l-4 border-accent pl-4 italic text-text-secondary my-4">
-            "Get traffic and then show me a chart and compare it to yesterday"
-          </blockquote>
-          <p>Turns into multiple focused searches that run independently.</p>
-        </ProseBlock>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Step 3: Embedding Search</h3>
-        <ProseBlock>
-          <p>The normalized query runs against the vector database:</p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>cosine similarity against generated example questions</li>
-            <li>a threshold filters out noise</li>
-            <li>matching operations come back with their dependency info</li>
-          </ul>
-          <p>At this point, we know <em>what</em> could satisfy the request.</p>
-          <p class="font-medium">Now we need to actually do it.</p>
-        </ProseBlock>
-      </div>
-    </section>
-
-    <!-- Execution Phase -->
-    <section id="execution" class="space-y-8 scroll-mt-20">
-      <SectionHeader title="Part 4: The Execution Phase" />
+      <CodeBlock
+        language="json"
+        :code="`[
+  { &quot;action&quot;: &quot;list_playlists&quot; },
+  { &quot;action&quot;: &quot;delete_playlist&quot; }
+]`"
+      />
 
       <ProseBlock>
-        <p>Execution in Agent Scalar follows one core rule:</p>
-        <blockquote class="border-l-4 border-accent pl-4 font-medium text-text-primary my-4">
-          Every agent is constrained. Hard.
+        <p>If required data is missing, a discovery step is inserted.</p>
+        <p class="text-text-secondary">No parameters are inferred during planning.</p>
+      </ProseBlock>
+    </section>
+
+    <!-- Execution -->
+    <section id="execution" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Execution Constraints" />
+      <ProseBlock>
+        <p>Execution agents are heavily restricted.</p>
+        <p>They do not receive the full API.</p>
+        <p>Each step receives a single-operation OpenAPI document.</p>
+        <p>For example:</p>
+      </ProseBlock>
+
+      <CodeBlock
+        language="yaml"
+        :code="`openapi: 3.0.3
+info:
+  title: Playlist API
+  version: 1.0.0
+
+paths:
+  /playlists/{playlist_id}:
+    delete:
+      operationId: deletePlaylist
+      summary: Delete a playlist
+      description: Deletes a playlist owned by the authenticated user.
+      parameters:
+        - \$ref: '#/components/parameters/PlaylistId'
+      responses:
+        '204':
+          description: Playlist deleted successfully
+        '401':
+          \$ref: '#/components/responses/Unauthorized'
+        '404':
+          \$ref: '#/components/responses/NotFound'
+
+components:
+  parameters:
+    PlaylistId:
+      name: playlist_id
+      in: path
+      required: true
+      description: Unique identifier for the playlist
+      schema:
+        type: string
+        example: gym-playlist-123
+
+  responses:
+    Unauthorized:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            \$ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Playlist not found
+      content:
+        application/json:
+          schema:
+            \$ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          example: Playlist not found
+        code:
+          type: string
+          example: NOT_FOUND`"
+      />
+
+      <ProseBlock>
+        <p>Validation schemas are generated directly from this spec.</p>
+        <p>Only valid parameters can be produced.</p>
+        <p class="text-accent font-medium">This removed most hallucinated requests.</p>
+      </ProseBlock>
+    </section>
+
+    <!-- Formatting -->
+    <section id="formatting" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Formatting Code Outputs" />
+      <ProseBlock>
+        <p>Formatting is handled by dedicated code agents.</p>
+        <p>They do not receive raw API responses.</p>
+        <p>Instead, they receive schemas describing the shape of the data.</p>
+        <p>For example:</p>
+      </ProseBlock>
+
+      <CodeBlock
+        language="typescript"
+        :code="`interface Playlist {
+  id: string
+  name: string
+  trackCount: number
+}`"
+      />
+
+      <ProseBlock>
+        <p>
+          With this information, the agent can generate formatting code with a clear understanding
+          of the expected input.
+        </p>
+        <p class="text-text-secondary">
+          Large API responses can be parsed and transformed without passing the full payload to the
+          model, reducing token usage and keeping formatting deterministic.
+        </p>
+      </ProseBlock>
+    </section>
+
+    <!-- Example Flow -->
+    <section id="flow" class="space-y-8 scroll-mt-20">
+      <SectionHeader title="Example Request Flow" />
+      <ProseBlock>
+        <p>Consider a user request like:</p>
+        <blockquote class="border-l-4 border-accent pl-4 italic text-text-secondary my-4">
+          "get my gym playlist, add the top Kendrick Lamar song to it, and show all the songs in my
+          playlists in a table"
         </blockquote>
-        <p class="text-text-secondary">Nothing gets free-form output.</p>
+        <p>During query handling, this is normalized and split into intents:</p>
+        <ul class="list-disc list-inside space-y-2 text-text-secondary">
+          <li>get playlists</li>
+          <li>get top songs</li>
+          <li>get playlist tracks</li>
+          <li>Table results</li>
+        </ul>
+        <p>Using the dependency map, these are expanded into concrete operations:</p>
+        <ul class="list-disc list-inside space-y-2 text-text-secondary">
+          <li>list playlists</li>
+          <li>search artists</li>
+        </ul>
+        <p>We then pass the expanded intents and the original user prompt to the planning agent.</p>
+        <p>The planner produces an ordered sequence of atomic steps:</p>
       </ProseBlock>
 
-      <!-- Planning -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Planning With the Task Agent</h3>
-        <ProseBlock>
-          <p>The task agent's job is planning, not execution.</p>
-          <p>It takes:</p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>the user's request</li>
-            <li>the relevant operations</li>
-            <li>conversation history</li>
-          </ul>
-          <p>And produces an ordered list of <strong>atomic tasks</strong>.</p>
-          <p>
-            Each task does exactly one thing. If data is missing, the task agent adds a discovery
-            step first.
-          </p>
-          <p class="text-text-secondary">
-            No parameters. No guessing. Just "what needs to happen, and in what order."
-          </p>
-        </ProseBlock>
-      </div>
-
-      <!-- Safe Execution -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Safe Execution With the Request Agent</h3>
-        <ProseBlock>
-          <p>
-            When it's time to execute an API call, we don't give the request agent the full API.
-          </p>
-          <p>
-            We generate a <strong>single-operation OpenAPI document</strong> containing only the
-            endpoint it's allowed to call.
-          </p>
-          <p>From the agent's perspective, that one operation <em>is the entire API</em>.</p>
-          <p>
-            On top of that, we generate a validation schema directly from the OpenAPI spec. The
-            model can only output parameters that actually exist, with the correct types.
-          </p>
-          <p class="text-accent font-medium">
-            This kills a whole class of hallucinations instantly.
-          </p>
-        </ProseBlock>
-      </div>
-
-      <!-- Chaining -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Chaining Requests at Runtime</h3>
-        <ProseBlock>
-          <p>If one task depends on another, we wait.</p>
-          <p>
-            Earlier responses get injected into later tasks at runtime. That's how IDs, timestamps,
-            and derived values flow through the system without shared global state.
-          </p>
-          <p>This allows chains of arbitrary length from a single prompt.</p>
-        </ProseBlock>
-      </div>
-
-      <!-- Tables & Graphs -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-medium text-text-primary">Tables, Graphs, and Snippets</h3>
-        <ProseBlock>
-          <p>When raw JSON isn't enough, we hand off to specialized code agents.</p>
-          <p>
-            Instead of giving them API data, we give them
-            <strong>schemas describing the shape of the data</strong>. They know exactly what fields
-            exist, but never see actual values.
-          </p>
-          <p>From that, they generate:</p>
-          <ul class="list-disc list-inside space-y-2 text-text-secondary">
-            <li>tables</li>
-            <li>charts</li>
-            <li>custom snippets</li>
-          </ul>
-          <p class="text-text-secondary">Safely and predictably.</p>
-        </ProseBlock>
-      </div>
-    </section>
-
-    <!-- Error Recovery -->
-    <section id="recovery" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="Part 5: Error Recovery" />
+      <CodeBlock
+        language="json"
+        :code="`[
+  {
+    &quot;action&quot;: &quot;list all playlists&quot;,
+    &quot;agent_instruction&quot;: &quot;get all user playlists&quot;
+  },
+  {
+    &quot;action&quot;: &quot;resolve target playlist&quot;,
+    &quot;agent_instruction&quot;: &quot;select the gym playlist from context&quot;,
+    &quot;context&quot;: &quot;list all playlists&quot;
+  },
+  {
+    &quot;action&quot;: &quot;search artist&quot;,
+    &quot;agent_instruction&quot;: &quot;lookup artist ID for Kendrick Lamar&quot;
+  },
+  {
+    &quot;action&quot;: &quot;get top songs&quot;,
+    &quot;agent_instruction&quot;: &quot;fetch top songs for artist&quot;,
+    &quot;context&quot;: &quot;search artist&quot;
+  },
+  {
+    &quot;action&quot;: &quot;add song to playlist&quot;,
+    &quot;agent_instruction&quot;: &quot;add top song to target playlist&quot;,
+    &quot;context&quot;: [&quot;get top songs&quot;, &quot;resolve target playlist&quot;]
+  },
+  {
+    &quot;action&quot;: &quot;list playlist tracks&quot;,
+    &quot;agent_instruction&quot;: &quot;get all tracks for each playlist&quot;,
+    &quot;context&quot;: &quot;list all playlists&quot;
+  },
+  {
+    &quot;action&quot;: &quot;format table&quot;,
+    &quot;agent_instruction&quot;: &quot;render playlist tracks as table&quot;,
+    &quot;context&quot;: &quot;list playlist tracks&quot;
+  }
+]`"
+      />
 
       <ProseBlock>
-        <p>LLMs are probabilistic. APIs fail. Code breaks.</p>
-        <p>So we added retries at every layer:</p>
-        <ul class="list-disc list-inside space-y-2 text-text-secondary">
-          <li>
-            <strong class="text-text-primary">retry-request</strong> — fixes bad parameters or auth
-            issues
-          </li>
-          <li><strong class="text-text-primary">retry-task</strong> — fixes bad plans</li>
-          <li><strong class="text-text-primary">retry-code</strong> — fixes runtime errors</li>
-        </ul>
-        <p>
-          Each retry sees full failure history and only changes what's broken. No loops. No starting
-          over.
+        <p>Each step executes only after its dependencies complete.</p>
+        <p>Data flows forward through explicit context passing.</p>
+        <p class="text-text-secondary">
+          This allows multi-step requests to execute deterministically, even when the original
+          prompt is vague or underspecified.
         </p>
       </ProseBlock>
-    </section>
 
-    <!-- Full Flow -->
-    <section id="flow" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="Part 6: The Full Flow" />
+      <div class="space-y-4">
+        <h3 class="text-xl font-medium text-text-primary">Result</h3>
+        <ProseBlock>
+          <p>The final step produces structured output instead of raw JSON.</p>
+          <p>Example table:</p>
+        </ProseBlock>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Upload -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Upload
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              generate example questions
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              build dependency graph
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              store embeddings
-            </li>
-          </ul>
-        </div>
-
-        <!-- Query -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Query
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              normalize input
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              chunk if needed
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              search embeddings
-            </li>
-          </ul>
-        </div>
-
-        <!-- Plan -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Plan
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              task agent produces atomic steps
-            </li>
-          </ul>
-        </div>
-
-        <!-- Execute -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Execute
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              request agent runs single-operation calls
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              dependencies resolve at runtime
-            </li>
-          </ul>
-        </div>
-
-        <!-- Format -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Format
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              code agents generate tables or graphs
-            </li>
-          </ul>
-        </div>
-
-        <!-- Recover & Stream -->
-        <div
-          class="bg-surface-secondary/30 rounded-lg p-6 border border-border hover:border-accent/50 transition-colors group"
-        >
-          <h3
-            class="text-lg font-medium text-text-primary mb-4 group-hover:text-accent transition-colors"
-          >
-            Recover & Stream
-          </h3>
-          <ul class="space-y-2">
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              retries handle failures
-            </li>
-            <li class="text-text-secondary flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
-              results return to the user
-            </li>
-          </ul>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-border text-sm">
+            <thead>
+              <tr class="bg-surface-secondary/50">
+                <th class="border border-border px-4 py-2 text-left text-text-primary">Playlist</th>
+                <th class="border border-border px-4 py-2 text-left text-text-primary">Track</th>
+                <th class="border border-border px-4 py-2 text-left text-text-primary">Artist</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-border px-4 py-2 text-text-secondary">Gym</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">HUMBLE.</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Kendrick Lamar</td>
+              </tr>
+              <tr>
+                <td class="border border-border px-4 py-2 text-text-secondary">Gym</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">DNA.</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Kendrick Lamar</td>
+              </tr>
+              <tr>
+                <td class="border border-border px-4 py-2 text-text-secondary">Gym</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Alright</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Kendrick Lamar</td>
+              </tr>
+              <tr>
+                <td class="border border-border px-4 py-2 text-text-secondary">Chill</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Nights</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Frank Ocean</td>
+              </tr>
+              <tr>
+                <td class="border border-border px-4 py-2 text-text-secondary">Chill</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Ivy</td>
+                <td class="border border-border px-4 py-2 text-text-secondary">Frank Ocean</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </section>
-
-    <!-- What We Learned -->
-    <section id="learnings" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="What We Learned" />
-
-      <ProseBlock>
-        <p>The magic wasn't a bigger model.</p>
-        <p class="font-medium text-text-primary">
-          It was constraints, orchestration, and specialization.
-        </p>
-        <ul class="list-disc list-inside space-y-2 text-text-secondary">
-          <li>schemas beat clever prompts</li>
-          <li>multiple focused agents beat one generalist</li>
-          <li>hiding irrelevant context prevents hallucinations</li>
-          <li>dependency-aware planning matters</li>
-          <li>retries with memory make probabilistic systems usable</li>
-        </ul>
-        <p>
-          Marc's question — <em>"what if you could just chat with an API?"</em> — ended up having a
-          very complicated answer.
-        </p>
-        <p class="text-accent font-medium">But this is the one we landed on.</p>
-      </ProseBlock>
     </section>
   </PageLayout>
 </template>

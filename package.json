@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ai-sdk/groq": "^2.0.33",
+    "@formkit/auto-animate": "^0.9.0",
     "@heroicons/vue": "^2.2.0",
     "ai": "^5.0.116",
     "pinia": "^3.0.4",
