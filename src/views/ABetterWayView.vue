@@ -486,7 +486,7 @@ const iterationCode = `while (iteration < MAX_ITERATIONS) {
         >
         <span
           class="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary"
-          >YOLO v8</span
+          >YOLO v12</span
         >
         <span
           class="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary"
