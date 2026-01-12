@@ -1,46 +1,45 @@
-import { createGroq } from '@ai-sdk/groq'
-import { generateObject, type ModelMessage } from 'ai'
-import { viewRouteAgentPrompt } from '@/configs/view-route-prompt'
-import { routeSchema, type PageName } from '@/configs/view-route-config'
+import type { ModelMessage } from 'ai'
+import type { PageName } from '@/configs/route-data'
 import { getPageText } from '@/helpers/pageContent'
-import { aboutMePrompt, responseSchema } from '@/configs/about-me-prompt'
 
 export interface ChatResponse {
   text: string
   page: PageName
 }
 
-const groq = createGroq({
-  apiKey: import.meta.env.VITE_GROQ_API_KEY,
-})
-
-const model = groq('openai/gpt-oss-120b')
-
 export const chat = async (messages: ModelMessage[]): Promise<ChatResponse> => {
-  // Step 1: Route to find the right page
-  const routeResponse = await generateObject({
-    system: viewRouteAgentPrompt,
-    model,
-    messages,
-    schema: routeSchema,
+  // Step 1: Route to find the right page via API
+  const routeResponse = await fetch('/api/identify-route', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages }),
   })
 
-  const selectedPage = routeResponse.object.selectedPage
-
-  // Step 2: Get page content
-  const pageContent = await getPageText(selectedPage)
-
-  // Step 3: Generate response with page context
-  const response = await generateObject({
-    system: aboutMePrompt(pageContent),
-    model,
-    messages,
-    schema: responseSchema,
-  })
-
-  if (response.object.notSure) {
-    return { text: response.object.response, page: 'Contact' }
+  if (!routeResponse.ok) {
+    throw new Error('Failed to identify route')
   }
 
-  return { text: response.object.response, page: selectedPage }
+  const { selectedPage } = (await routeResponse.json()) as { selectedPage: PageName }
+
+  // Step 2: Get page content (still client-side)
+  const pageContent = await getPageText(selectedPage)
+
+  // Step 3: Generate response with page context via API
+  const generateResponse = await fetch('/api/generate-response', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, pageContent }),
+  })
+
+  if (!generateResponse.ok) {
+    throw new Error('Failed to generate response')
+  }
+
+  const response = (await generateResponse.json()) as { response: string; notSure: boolean }
+
+  if (response.notSure) {
+    return { text: response.response, page: 'Contact' }
+  }
+
+  return { text: response.response, page: selectedPage }
 }

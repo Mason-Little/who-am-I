@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:vercel": "vercel dev",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
@@ -58,6 +59,7 @@
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.0",
+    "vercel": "^50.1.6",
     "vite": "npm:rolldown-vite@latest",
     "vite-plugin-vue-devtools": "^8.0.5",
     "vitest": "^4.0.14",

@@ -1,0 +1,19 @@
+{
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "noEmit": true
+  },
+  "include": [
+    "api/**/*",
+    "src/configs/route-data.ts",
+    "src/configs/about-me-prompt.ts",
+    "src/configs/view-route-prompt.ts"
+  ]
+}
