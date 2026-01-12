@@ -6,23 +6,24 @@ import ProseBlock from '@/components/ui/ProseBlock.vue'
 import SkillCard from '@/components/cards/SkillCard.vue'
 
 const skills = {
-  languages: ['TypeScript', 'JavaScript', 'Python', 'Vue.js', 'HTML/CSS'],
-  ai_ml: [
-    'OpenAI API',
-    'Mistral 7B Fine-tuning',
-    'Embeddings',
-    'Vector Databases (PGVector)',
-    'Prompt Engineering',
-    'Multi-Agent Systems',
+  Languages: ['TypeScript', 'JavaScript', 'Python'],
+  Frameworks: ['Vue', 'React'],
+  Databases: ['PostgreSQL', 'MongoDB'],
+  'LLM & AI Systems': [
+    'LLM-powered tooling',
+    'custom model fine-tuning',
+    'embeddings',
+    'retrieval-augmented generation (RAG)',
   ],
-  backend: ['Node.js', 'API Design', 'OpenAPI/Swagger', 'PostgreSQL'],
-  tools: ['Git', 'Lego Technic/Mindstorms (The OG)', 'Wrenching on Volvos'],
+  'Vector Databases & Search': ['pgvector', 'Weaviate', 'Pinecone'],
+  'API & Schema Tooling': ['REST APIs', 'OpenAPI', 'Postman'],
+  'Infrastructure & Tooling': ['Docker', 'Git', 'Linux', 'CI pipelines'],
 }
 
 const sections = [
-  { id: 'origin', label: 'Origin Story' },
-  { id: 'scalar', label: 'The Scalar Era' },
-  { id: 'offline', label: 'Offline Projects' },
+  { id: 'background', label: 'Background' },
+  { id: 'scalar', label: 'Scalar' },
+  { id: 'offline', label: 'Offline' },
   { id: 'skills', label: 'Tech Stack' },
 ]
 </script>
@@ -31,74 +32,87 @@ const sections = [
   <PageLayout :sections="sections">
     <PageHeader
       title="About Me"
-      subtitle="Full Stack Engineer, AI Specialist, and Car Enthusiast."
+      subtitle="Full-stack engineer focused on systems, APIs, and applied AI. Also into cars."
     />
 
-    <!-- Bio Section -->
-    <section id="origin" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="The Origin Story" />
+    <!-- Background Section -->
+    <section id="background" class="space-y-6 scroll-mt-20">
+      <SectionHeader title="Background" />
       <ProseBlock>
+        <p>Born in <span class="text-text-primary font-medium">Vancouver</span>.</p>
+        <p>Grew up in <span class="text-text-primary font-medium">Squamish</span>.</p>
         <p>
-          I was born in <span class="text-text-primary font-medium">Vancouver</span> and moved to
-          <span class="text-text-primary font-medium">Squamish</span> at a young age. My engineering
-          journey started early—not with code, but with
-          <span class="text-text-primary font-medium">Lego Technic</span> and Mindstorms robots.
-          This passion for building carried me through middle school robotics competitions and
-          eventually into high school, where I wrote my first line of Python.
+          Started with <span class="text-text-primary font-medium">Lego Technic</span> and
+          Mindstorms. Started building robots in elementary school. Wrote my first real line of
+          Python in middle school.
         </p>
         <p>
-          What started as simple scripting evolved into building scrapers to find camping sites for
-          my cousins. This project connected me with
-          <span class="text-text-primary font-medium">Marc Laventure</span>, who took me under his
-          wing. For a year, he mentored me in the fundamentals of Software Engineering, teaching me
-          <strong>Vue.js, JavaScript, and Python</strong>.
+          One of my projects was a scraper to find camping reservations for my cousins. That project
+          led me to <span class="text-text-primary font-medium">Marc Laventure</span>.
         </p>
         <p>
-          During this time, I combined my love for code with my passion for cars by building a car
-          classification app using a custom CNN fine-tuning layer. This was in the "old world"
-          before ChatGPT changed everything.
+          He mentored me for about a year and introduced me to
+          <strong>Vue, JavaScript, and Machine Learning</strong> (before ChatGPT).
+        </p>
+        <p>
+          Around the same time, I built a car classification app using a custom CNN. This was before
+          ChatGPT and mainstream LLM tooling.
         </p>
       </ProseBlock>
     </section>
 
     <!-- Scalar Section -->
     <section id="scalar" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="The Scalar Era" />
+      <SectionHeader title="Scalar" />
       <ProseBlock>
         <p>
           When Marc founded <span class="text-text-primary font-medium">Scalar</span>, I joined as
-          one of the first employees. Then ChatGPT released, and the landscape shifted. I dove
-          headfirst into production-scale AI:
+          one of the first employees.
         </p>
+        <p>
+          Shortly after, ChatGPT launched and the problem space shifted. I moved deeper into
+          production AI systems.
+        </p>
+        <p>Some of the work I did there:</p>
         <ul class="list-disc list-inside space-y-2 ml-4 marker:text-accent">
           <li>
-            Built a custom model to write API documentation from OpenAPI specs (using embedding
-            models for document splitting to handle low token limits).
+            Built a model to generate API documentation directly from OpenAPI specs
+            <ul class="list-disc list-inside ml-6 mt-1 text-text-secondary">
+              <li>Used embeddings for document chunking to work around token limits</li>
+            </ul>
           </li>
           <li>
-            Fine-tuned a <span class="text-text-primary font-medium">Mistral 7B</span> model for
-            faster, cheaper, and more secure/private document generation.
+            Fine-tuned a <span class="text-text-primary font-medium">Mistral 7B</span> model to
+            reduce cost and latency while keeping generation private
           </li>
           <li>
-            Developed <strong>Agent Scalar</strong>: A sophisticated system using PG Vector,
-            TypeScript, JSON Schema, and multi-agent workflows (4+ agents) that allows users to
-            execute complex tasks by querying OpenAPI documents.
+            Built <strong>Agent Scalar</strong>
+            <ul class="list-disc list-inside ml-6 mt-1 text-text-secondary">
+              <li>Multi-agent system (4+ agents)</li>
+              <li>PGVector for retrieval</li>
+              <li>TypeScript and JSON Schema for execution constraints</li>
+              <li>Allows users to execute real API workflows by querying OpenAPI documents</li>
+            </ul>
           </li>
         </ul>
+        <p class="text-text-secondary">
+          Most of my work focused on reliability, execution safety, and scaling AI beyond simple
+          Q&A.
+        </p>
       </ProseBlock>
     </section>
 
-    <!-- Side Projects Section -->
+    <!-- Offline Section -->
     <section id="offline" class="space-y-6 scroll-mt-20">
-      <SectionHeader title="Offline Projects" />
+      <SectionHeader title="Offline" />
       <ProseBlock>
+        <p>When I'm not working on software, I'm usually in the garage.</p>
         <p>
-          When I'm not orchestrating AI agents, I'm usually in the garage. I'm currently working on
-          a
-          <span class="text-text-primary font-medium">1992 Volvo 240</span>, which I've LS-swapped
-          with a <span class="text-text-primary font-medium">Twin Turbo 5.3L LS</span> engine. It's
-          a complete rebuild—every nut and bolt.
+          I'm currently rebuilding a
+          <span class="text-text-primary font-medium">1992 Volvo 240</span>.
         </p>
+        <p>LS-swapped. Twin-turbo 5.3L.</p>
+        <p>Full teardown. Every nut and bolt.</p>
       </ProseBlock>
     </section>
 
