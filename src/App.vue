@@ -7,6 +7,7 @@ import IconChat from '@/components/icons/IconChat.vue'
 import { useRoute } from 'vue-router'
 import { useLayout } from '@/composables/useLayout'
 import { reactive } from 'vue'
+import { Analytics } from '@vercel/analytics/vue'
 
 const route = useRoute()
 const layout = reactive(useLayout())
@@ -25,6 +26,7 @@ const getFileName = (path: string) => {
   <div
     class="h-screen w-screen flex flex-col bg-bg-primary text-text-primary font-sans overflow-hidden"
   >
+    <Analytics />
     <!-- Top Mobile Status Bar (Visible only on mobile) -->
     <div
       v-if="layout.isMobile"
